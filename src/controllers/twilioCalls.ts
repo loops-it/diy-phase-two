@@ -24,7 +24,7 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
     const gather = twiml.gather({
       input: "speech",
       action: "/twilio-results",
-      language: "en-US",
+      language: "en-IN",
       speechModel: "phone_call"
     })
     gather.say(" Please ask your question");
@@ -145,7 +145,7 @@ Standalone question:`;
     const gather = twiml.gather({
       input: "speech",
       action: "/twilio-results",
-      language: "en-US",
+      language: "en-IN",
       speechModel: "phone_call"
     })
     gather.say("Do you have any other questions");
