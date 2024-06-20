@@ -49,9 +49,12 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
       orderBy: { created_at: 'desc' },
     });
 
+    
     for (var i = 0; i < old_chats.length; i++) {
       chatHistory.push({ role: old_chats[i].role, content: old_chats[i].message });
     }
+
+    chatHistory.push({ role: "user", content: user_question });
 
     console.log(chatHistory);
     
@@ -84,7 +87,7 @@ Standalone question:`;
         call_id: call_id,
         language: "english",
         message: user_question,
-        role: "customer",
+        role: "user",
         viewed_by_admin: "no",
       },
     });
@@ -105,7 +108,7 @@ Standalone question:`;
     });
     let context = results.join("\n");
 
-    console.log("context", context);
+    // console.log("context", context);
     // const questionRephrasePrompt = `Give a friendly greeting;`;
 
     // const final_answer = await openai.completions.create({
