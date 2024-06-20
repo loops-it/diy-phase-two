@@ -53,6 +53,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
       chatHistory.push({ role: old_chats[i].role, content: old_chats[i].message });
     }
 
+    console.log(chatHistory);
     const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION related to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevent keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the user asks for information like email or address, provide DFCC email and address.
 ----------
 CHAT HISTORY: {${chatHistory}}
