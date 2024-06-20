@@ -254,3 +254,16 @@ model FlowFormSubmissions {
 
    @@map("flow_form_submissions")
 }
+
+model VoiceCalls {
+  id               Int      @id @default(autoincrement())
+  caller_no       String
+  language         String
+  message          String
+  role  String
+  viewed_by_admin  String?   
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  @@map("voice_calls")
+}

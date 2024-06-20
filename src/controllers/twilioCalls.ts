@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import OpenAI from "openai";
 import { Pinecone } from '@pinecone-database/pinecone'
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -21,7 +23,7 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
             twiml.say("Hello, This is dfcc chat bot");
             const gather = twiml.gather({
                 input : "speech",
-                action : "/twilio-results",
+                action : "/twilio-results", 
                 language : "en-US",
                 speechModel : "phone_call"
             })
@@ -37,6 +39,8 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
     try {
         //console.log(req.body);
         const user_question = req.body.SpeechResult;
+        const callerNumber = req.body.From;
+
         const embedding = await openai.embeddings.create({
             model: "text-embedding-ada-002",
             input: user_question,
@@ -44,6 +48,15 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
 
         console.log("user_question",user_question);
 
+        await prisma.voiceCalls.create({
+          data: {
+            caller_no: callerNumber,
+            language: "english",
+            message: user_question,
+            role: "customer",
+            viewed_by_admin: "no",
+          },
+        });
         //console.log("embedding",embedding.data[0].embedding);
 
         const queryResponse = await namespace.query({
@@ -76,6 +89,17 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
             max_tokens: 180,
             temperature: 0,
         });
+
+        await prisma.voiceCalls.create({
+          data: {
+            caller_no: callerNumber,
+            language: "english",
+            message: final_answer.choices[0].text,
+            role: "bot",
+            viewed_by_admin: "no",
+          },
+        });
+
         res.type('xml');
         const twiml = new  VoiceResponse();
         twiml.say(final_answer.choices[0].text);
