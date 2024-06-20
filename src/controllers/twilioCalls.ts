@@ -40,6 +40,18 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
         //console.log(req.body);
         const user_question = req.body.SpeechResult;
         const call_id = req.body.CallSid;
+        let chatHistory = req.body.messages || [];
+
+        const old_chats = await prisma.voiceCalls.findMany({
+          where: {
+            call_id: call_id
+            },
+          orderBy: { created_at: 'desc' }, 
+        });
+
+        for (var i = 0; i < old_chats.length; i++) {
+          chatHistory.push({ role: old_chats[i].role, content:  old_chats[i].message });
+        }
 
         const embedding = await openai.embeddings.create({
             model: "text-embedding-ada-002",
@@ -75,13 +87,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
         let context = results.join("\n");
 
         console.log("context", context);
-        const questionRephrasePrompt = `You are a helpful assistant and you are friendly. 
-        if user greet you you will give proper greeting in friendly manner. Your name is DFCC GPT.
-        Answer ${user_question} Only based on given Context: ${context}, your answer must be less than 150 words. 
-        If the user asks for information like your email or address, you'll provide DFCC email and address. 
-        If answer has list give it as numberd list. If it has math question relevent to given Context give calculated answer, 
-        If user question is not relevent to the Context just say "I'm sorry.. no information documents found for data retrieval.". 
-        Do NOT make up any answers and questions not relevant to the context using public information.`;
+        const questionRephrasePrompt = `Give a friendly greeting;`;
 
         const final_answer = await openai.completions.create({
             model: "gpt-3.5-turbo-instruct",
@@ -99,81 +105,19 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
             viewed_by_admin: "no",
           },
         });
-
         res.type('xml');
         const twiml = new  VoiceResponse();
         twiml.say(final_answer.choices[0].text);
+        const gather = twiml.gather({
+            input : "speech",
+            action : "/twilio-results", 
+            language : "en-US",
+            speechModel : "phone_call"
+        })
+        //gather.say(" Please ask your question");
         return res.send(twiml.toString());
       } catch (error) {
         console.error(error);
         return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
       }
 };
-// import express, { Request, Response, NextFunction } from 'express';
-// import { twiml } from 'twilio';
-// import OpenAI from 'openai';
-
-// const { VoiceResponse } = twiml;
-
-// const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-// export const twilioVoice = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const response = new VoiceResponse();
-//     response.say('Hello, please speak after the beep. Press any key when you are done.');
-//     response.record({
-//         action: '/twilio-results',
-//         method: 'POST',
-//         finishOnKey: '*',
-//         maxLength: 60
-//     });
-//     response.say('Recording completed. Please wait while we process your request.');
-
-//     res.type('text/xml');
-//     res.send(response.toString());
-//     } catch (error) {
-//       console.error(error);
-//       return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
-//     }
-// };
-// export const twilioResults = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const recordingUrl = req.body.RecordingUrl;
-//     console.log(`Recording URL: ${recordingUrl}`);
-
-//     // Fetch the audio file from the recording URL
-//     const audioResponse = await fetch(recordingUrl);
-//     const audioBuffer = await audioResponse.arrayBuffer();
-
-//     // Convert audio buffer to base64
-//     const audioBase64 = Buffer.from(audioBuffer).toString('base64');
-
-//     const file = {
-//       buffer: audioBuffer, 
-//       filename: 'audio.wav',
-//       mimetype: 'audio/wav',
-//     };
-//     // Transcribe the audio to text using OpenAI Whisper
-//     const transcriptionResponse = await openai.audio.transcriptions.create({
-//       file: file,
-//       model: 'whisper-1',
-//       language: 'en',
-//     });
-
-//     const transcription = transcriptionResponse.data.text;
-//     if (!transcription) {
-//       throw new Error('Transcription failed or resulted in empty text');
-//     }
-
-//     console.log(`Transcription: ${transcription}`);
-
-//     const twimlResponse = new VoiceResponse();
-//     twimlResponse.say(transcription);
-
-//     res.type('text/xml');
-//     res.send(twimlResponse.toString());
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
-//   }
-// };
