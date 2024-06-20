@@ -39,7 +39,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
     try {
         //console.log(req.body);
         const user_question = req.body.SpeechResult;
-        const callerNumber = req.body.From;
+        const call_id = req.body.CallSid;
 
         const embedding = await openai.embeddings.create({
             model: "text-embedding-ada-002",
@@ -50,7 +50,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
 
         await prisma.voiceCalls.create({
           data: {
-            caller_no: callerNumber,
+            call_id: call_id,
             language: "english",
             message: user_question,
             role: "customer",
@@ -92,7 +92,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
 
         await prisma.voiceCalls.create({
           data: {
-            caller_no: callerNumber,
+            call_id: call_id,
             language: "english",
             message: final_answer.choices[0].text,
             role: "bot",

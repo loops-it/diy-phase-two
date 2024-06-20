@@ -257,7 +257,7 @@ model FlowFormSubmissions {
 
 model VoiceCalls {
   id               Int      @id @default(autoincrement())
-  caller_no       String
+  call_id       String
   language         String
   message          String
   role  String
