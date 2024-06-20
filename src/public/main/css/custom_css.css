@@ -1,0 +1,178 @@
+.sidebar-menu {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 25px;
+    background: #E9F1FF;
+    height: 100%;
+}
+.main-header div.logo-box{
+    border-bottom: none;
+    border-right:none;
+}
+.logo-lg .light-logo img{
+    width: 100% !important; 
+}
+.content-wrapper{
+    background-color: #E9F1FF !important;
+}
+.content-header .page-title {
+    color: #000;
+    font-weight: 500;
+    padding: 0 0.5rem 0 0;
+}
+.content-header .breadcrumb{
+    font-size: 1.2857142857142858rem;
+    color: #000;
+    font-weight: 500;
+    font-family: "Rubik", sans-serif;
+}
+.box {
+    border:1px solid #000;
+    border-radius: 0px;
+    background-color: #E9F1FF !important;
+    margin-top: 50px!important;
+}
+.box-header {
+    padding: 0px;
+}
+.box-header .box-title {
+    display: block;
+    margin-top: -10px;
+    background: #E9F1FF;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: max-content;
+    color: #000;
+    font-weight: 500;
+    margin-left: 20px;
+}
+.content-header .breadcrumb .breadcrumb-item a {
+    color: #000;
+}
+.content-header .breadcrumb-item + .breadcrumb-item::before {
+    display: none;
+}
+.box-header.with-border {
+    border-bottom-width: none;
+    border-bottom-style: none;
+}
+.box-footer {
+    border-top: none;
+
+}
+.box-body {
+    padding: 2rem;
+}
+.light-skin .sidebar a {
+    color: #475562!important;
+    opacity: 1!important;
+}
+.theme-primary .main-sidebar .svg-icon {
+    filter: unset!important;
+}
+.notification-svg .svg-icon{
+    filter: unset!important;
+    width: 40px;
+}
+.main-header .r-side .app-menu, .main-header .r-side .btn-group a {
+    margin: 14px 5px;
+}
+
+  .navbar-custom-menu .navbar-nav > li > a.dropdown-toggle{
+    padding: 5px;
+  }
+  .box-footer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-bottom: 1.5rem;
+    padding-top: 0rem;
+}
+.form-control, .form-select {
+    border-radius: 5px;
+    box-shadow: none;
+    border:none;
+    height: 50px;
+    background-color: #fff !important;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+}
+body {
+    color: #000;
+}
+table.dataTable {
+    border-collapse: unset !important;
+}
+.table-bordered {
+    border: unset !important;
+}
+.table {
+    --bs-table-bg: #fff;
+    --bs-table-striped-color: #212529;
+    --bs-table-striped-bg: #F9FAFC;
+    --bs-table-active-color: #212529;
+    --bs-table-active-bg: #fff;
+    --bs-table-hover-color: #212529;
+    --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    vertical-align: top;
+    border-color: #dee2e6;
+}
+.table > thead {
+    background-color: #fff;
+}
+.chats-container{
+    background: #fff;
+    border-radius: 25px;
+    border: 3px solid #D0E2FF;
+}
+.chats-container .dash-chat{
+    border:unset;
+    border-radius: 25px;
+    background-color: #fff !important;
+    margin-top: 5px!important;
+    box-shadow: unset;
+    border-right:1px solid #E5EAFF;
+}
+.chats-container .slimScrollDiv{
+    background: #fff;
+}
+.chats-container .chat-box-six2 a{
+    color: #000!important;
+}
+.chats-container .dash-chat .customtab li a.nav-link.active{
+    border: unset !important;
+    border-bottom: 2px solid #6993ff!important;
+    text-align: left;
+    font-size: 1.5rem;
+}
+.chats-container .dash-single-chat{
+    border:unset;
+    background-color: #fff !important;
+    margin-top: 5px!important;
+    box-shadow: unset;
+}
+.chats-container .dash-single-chat a{
+    color: #000!important;
+}
+.chats-container .chat-box-six .rt-bx .chat-comment{
+    background-color: #3871CD !important;
+    color: #fff!important;
+}
+.chats-container .chat-box-six .lt-bx .chat-comment{
+    background-color: #E9F1FF !important;
+    color: #000!important;
+}
+.avatar img {
+    padding: 5px!important;
+}
+@media only screen and (max-width: 600px) {
+    .main-header .r-side .app-menu, .main-header .r-side .btn-group a {
+        margin: 0px 5px;
+    }
+  }
