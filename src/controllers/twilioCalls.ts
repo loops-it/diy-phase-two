@@ -114,7 +114,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
             language : "en-US",
             speechModel : "phone_call"
         })
-        //gather.say(" Please ask your question");
+        gather.say("Do you have any other questions");
         return res.send(twiml.toString());
       } catch (error) {
         console.error(error);
