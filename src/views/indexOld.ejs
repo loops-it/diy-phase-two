@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>DFCC Chat Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+    integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+    crossorigin="anonymous"></script>
+  <style>
+    .container {
+      width: 360px;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      border: solid 1px #333;
+      border-radius: 30px;
+    }
+
+    .bot-message {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      color: #000;
+      display: flex;
+      align-items: end;
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: start;
+      align-items: start;
+    }
+
+    .bot-message div {
+      border: solid 1px #3d3d3d;
+      border-radius: 30px;
+      max-width: 100%;
+      width: max-content;
+      padding: 10px;
+      border-bottom-left-radius: 0px;
+      font-size: 12px;
+    }
+
+    .user-message {
+      padding: 10px;
+      border-radius: 5px;
+      white-space: pre-line;
+      margin-bottom: 10px;
+      color: #000;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: end;
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: end;
+      align-items: end;
+    }
+
+    .user-message div {
+      border: solid 1px #3d3d3d;
+      border-radius: 30px;
+      max-width: 90%;
+      width: max-content;
+      padding: 10px 20px;
+      border-bottom-right-radius: 0px;
+      margin-right: 10px;
+      font-size: 12px;
+    }
+
+    .background {
+      background: transparent;
+    }
+
+    #response {
+      width: 100%;
+      padding: 0px;
+      background-color: #fff;
+      border-radius: 25px;
+      height: 450px;
+      overflow: auto;
+      position: relative;
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+    }
+
+    .message-image {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+      margin-top: 10px;
+      border-radius: 50%;
+    }
+
+    .chat-submit-button {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      background-color: #000;
+      border-radius: 100%;
+      color: #fff;
+      padding: 10px;
+      font-size: 20px;
+      line-height: 20px;
+      font-family: "Poppins", sans-serif;
+    }
+
+    #questionForm {
+      position: relative;
+      padding: 10px;
+      padding-top: 0px;
+    }
+
+    .chat-header {
+      background-color: #303030;
+      border-top-left-radius: 30px;
+      border-top-right-radius: 30px;
+    }
+
+    .chat-container {
+      padding: 10px;
+    }
+
+    .chat-input {
+      line-height: 30px;
+      border-radius: 30px;
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+      padding-right: 45px !important;
+    }
+
+    .chat-input::placeholder {
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+    }
+
+    .language-buttons button {
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+      border-radius: 15px;
+      background-color: #A90e09;
+      border: none;
+      color: #fff;
+      width: 100%;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    .liveagentBtn {
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+      border-radius: 15px;
+      background-color: #000;
+      border: none;
+      color: #fff;
+      width: 100%;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      margin-top: 10px;
+    }
+
+    @media screen and (max-width: 600px) {
+      .background {
+        padding: 5px !important;
+        margin-top: 10px;
+      }
+
+      .container {
+        width: 100% !important;
+        margin: 10px;
+        position: relative !important;
+        border: solid 1px #333;
+        border-radius: 30px;
+        height: 98vh;
+      }
+
+      #response {
+        width: 100%;
+        height: 80vh;
+      }
+
+      #questionForm {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 10px;
+        padding-top: 0px;
+      }
+    }
+
+    .closeButton {
+      background-color: transparent;
+      border: solid 1px #fff;
+      border-radius: 100%;
+      font-size: 16px;
+      line-height: 16px;
+      width: 25px;
+      height: 25px;
+      color: #fff;
+      margin-right: 20px;
+      text-align: center;
+      padding: 0px;
+
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes visible {
+      0% {
+        visibility: hidden;
+      }
+
+      100% {
+        visibility: visible;
+      }
+    }
+
+    .loading {
+      animation: fadeIn 0.5s ease-in-out infinite alternate, visible 0.5s ease-in-out infinite alternate;
+    }
+
+    .typingmsg-wrapper {
+      background-color: #fff;
+      color: #000;
+    }
+
+    .typing-msg {
+      color: #000;
+      font-size: 25px;
+      padding: 5px !important;
+    }
+
+    .error-message {
+      background-color: #ec1e289c;
+      color: #fff;
+      padding: 10px;
+      border-radius: 10px !important;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body class="background">
+  <div class="container my-0 p-0">
+    <div class="d-flex chat-header w-100 py-2 text-center justify-content-between align-items-center">
+      <img src="../chat-top-bar.webp" alt="" class="px-3 py-2">
+      <!-- <button class="closeButton"><i class="bi bi-x-lg"></i></button> -->
+    </div>
+
+    <div class="d-flex chat-container">
+      <div id="response" class="">
+        <div class="d-flex justify-content-center align-items-center">
+          <img src="../chat-logo.webp" alt="" class="px-3 py-2 mb-3">
+        </div>
+        <div class="bot-message"><img class="message-image" src="/chat-header.webp">
+          <div>
+            <img src="../language-img.webp" alt="" class="px-3 py-2 mb-3 img-fluid">
+            <p class="mb-2">Hello, Welcome to DFCC Bank. Please select the language to get started.</p>
+            <p class="mb-2">ආයුබෝවන්, DFCC බැංකුව වෙත ඔබව සාදරයෙන් පිළිගනිමු. කරුණාකර ආරම්භ කිරීමට භාෂාව තෝරන්න.</p>
+            <p class="mb-2">வணக்கம், DFCC வங்கிக்கு வரவேற்கிறோம். தொடங்குவதற்கு மொழியைத் தேர்ந்தெடுக்கவும்.</p>
+            <span class="d-flex flex-row language-buttons w-100 p-0 m-0">
+              <span class="col-4 pe-1">
+                <button id="changeToEnglishButton">English</button>
+              </span>
+              <span class="col-4 pe-1">
+                <button id="changeToSinhalaButton">Sinhala</button>
+              </span>
+              <span class="col-4">
+                <button id="changeToTamilButton">Tamil</button>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form id="questionForm">
+      <input class="form-control chat-input" placeholder="What's your question about?" id="question" name="question"
+        required></input>
+      <button type="submit" class="btn btn-light btn-lg chat-submit-button"><i class="bi bi-send"></i></button>
+    </form>
+  </div>
+
+
+  <script>
+    // Initialize the chat history variable
+    let chatHistory = [];
+
+
+    // Function to append a typing animation message
+    function showTypingAnimation() {
+      const responseDiv = document.getElementById("response");
+      const typingMessage = document.createElement("div");
+      typingMessage.classList.add("bot-message");
+      typingMessage.innerHTML = `
+    <div class="typing-animation typingmsg-wrapper">
+      <i class="bi bi-three-dots loading typing-msg"></i>
+    </div>
+  `;
+      responseDiv.appendChild(typingMessage);
+      responseDiv.scrollTop = responseDiv.scrollHeight;
+    }
+
+    // Function to remove typing animation message
+    function hideTypingAnimation() {
+      const typingMessage = document.querySelector(".typing-animation");
+      if (typingMessage) {
+        typingMessage.remove();
+      }
+    }
+
+
+    // Function to handle errors
+    function handleErrorMessage(error) {
+      const responseDiv = document.getElementById("response");
+      let errorMessage = "<p class='error-message'>The allocated number of tokens are over, please ask the administrator to add more tokens to the system.</p>"; // Default error message
+
+      // Check if the error message matches the specific error condition
+      if (error.message === "The allocated number of tokens are over, please ask the administrator to add more tokens to the system.") {
+        errorMessage = "<p>The allocated number of tokens are over, please ask the administrator to add more tokens to the system.</p>";
+      }
+
+      responseDiv.innerHTML = errorMessage;
+    }
+
+    // Function to append a message to the response div
+    function appendMessageToResponse(role, content) {
+      const responseDiv = document.getElementById("response");
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add(role === 'user' ? "user-message" : "bot-message");
+
+      // Create an image element for the message
+      const image = document.createElement("img");
+      image.classList.add("message-image");
+      image.src = role === 'user' ? "/user.webp" : "/chat-header.webp"; // Replace with actual image URLs
+
+      // Use innerHTML to allow HTML formatting in the message
+      // Check if the content is a list
+      const listRegex = /^\d+\.\s.*$/gm;
+      const isList = listRegex.test(content);
+
+      // If it's a list, format it as an unordered list
+      /*if (isList) {
+        const listItems = content.split('\n').map(item => {
+          return `<li style="margin-bottom: 10px !important;">${item}</li>`;
+        }).join('');
+        messageDiv.innerHTML = `<div><ul style="list-style: none; padding: 0px !important">${listItems}</ul></div>`;
+      } else {
+        messageDiv.innerHTML = `<div>${content}</div>`;
+      }
+      if (content.includes("I'm sorry.. no information documents found for data retrieval.")) {
+        messageDiv.innerHTML = `
+        <button id="retryButton" class="liveagentBtn">Chat with live agent</button>
+      <div>${content}</div>
+      
+    `;
+      } else {
+        messageDiv.innerHTML = `<div>${content}</div>`;
+      }
+      messageDiv.prepend(image);
+
+      responseDiv.appendChild(messageDiv);
+      // Scroll down to the latest message
+      responseDiv.scrollTop = responseDiv.scrollHeight;*/
+       // If it's a list, format it as an unordered list
+       if (isList) {
+        const listItems = content.split('\n').map(item => {
+          return `<li style="margin-bottom: 10px !important;">${item}</li>`;
+        }).join('');
+        messageDiv.innerHTML = `<div><ul style="list-style: none; padding: 0px !important">${listItems}</ul></div>`;
+      } else {
+        messageDiv.innerHTML = `<div>${content}</div>`;
+      }
+      messageDiv.prepend(image);
+
+      responseDiv.appendChild(messageDiv);
+      // Scroll down to the latest message
+      responseDiv.scrollTop = responseDiv.scrollHeight;
+    }
+
+    document.getElementById("questionForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+      const questionInput = document.getElementById("question");
+      const question = questionInput.value;
+      document.getElementById("question").value = "";
+
+      const selectedLanguage = localStorage.getItem('selectedLanguage');
+
+      try {
+        // Add the user's question to the chat history
+        chatHistory.push({ role: 'user', content: question });
+
+        // Display the user's message immediately
+        appendMessageToResponse('user', question);
+
+        // Disable input field
+        questionInput.disabled = true;
+        // Show typing animation
+        showTypingAnimation();
+
+        // Change button icon to three dots
+        const submitButton = document.querySelector('.chat-submit-button');
+        submitButton.innerHTML = '<i class="bi bi-three-dots loading"></i>';
+        submitButton.disabled = true;
+
+        let chatId = localStorage.getItem('chatId');
+        console.log("generated chat id : ", chatId)
+        const requestBody = {
+          messages: chatHistory,
+          chatId: chatId,
+          language: selectedLanguage || 'English'
+        };
+
+        console.log("requestBody : ", requestBody)
+        const response = await fetch("/api/chat-response", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        const data = await response.json();
+
+        // Update the chat history for future interactions
+        chatHistory = data.chatHistory || [];
+        console.log("chatId : ", data.chatId);
+
+        if (!localStorage.getItem('chatId')) {
+          localStorage.setItem('chatId', data.chatId);
+        }
+
+        // Display the bot's response in HTML format
+        appendMessageToResponse('bot', data.answer);
+
+        // Hide typing animation
+        hideTypingAnimation();
+        // Clear the question input
+        questionInput.value = '';
+        submitButton.innerHTML = '<i class="bi bi-send"></i>';
+        submitButton.disabled = false;
+
+      } catch (error) {
+        console.error("Error submitting question:", error);
+        // Handle specific error message
+        handleErrorMessage(error);
+      } finally {
+        // Enable input field
+        questionInput.disabled = false;
+
+        // Change button icon back to send icon
+        // const submitButton = document.querySelector('.chat-submit-button');
+        // submitButton.innerHTML = '<i class="bi bi-send"></i>';
+      }
+    });
+
+
+    document.getElementById("changeToEnglishButton").addEventListener("click", function () {
+      localStorage.setItem('selectedLanguage', 'English');
+      appendLanguageMessage("Please ask your question in English.");
+    });
+
+    document.getElementById("changeToSinhalaButton").addEventListener("click", function () {
+      localStorage.setItem('selectedLanguage', 'Sinhala');
+      appendLanguageMessage("කරුණාකර ඔබේ ප්‍රශ්නය සිංහලෙන් අසන්න.");
+    });
+
+    document.getElementById("changeToTamilButton").addEventListener("click", function () {
+      localStorage.setItem('selectedLanguage', 'Tamil');
+      appendLanguageMessage("உங்கள் கேள்வியை தமிழில் கேளுங்கள்.");
+    });
+
+    function appendLanguageMessage(content) {
+      const responseDiv = document.getElementById("response");
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("bot-message");
+
+      // Create an image element for the message
+      const image = document.createElement("img");
+      image.classList.add("message-image");
+      image.src = "/chat-header.webp"; // Replace with actual bot image URL
+
+      // Use innerHTML to allow HTML formatting in the message
+      messageDiv.innerHTML = `<div>${content}</div>`;
+      messageDiv.prepend(image);
+
+      responseDiv.appendChild(messageDiv);
+      // Scroll down to the latest message
+      responseDiv.scrollTop = responseDiv.scrollHeight;
+    }
+  </script>
+</body>
+
+</html>

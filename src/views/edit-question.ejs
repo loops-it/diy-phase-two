@@ -1,0 +1,93 @@
+<%- include('layouts/header.ejs') %>
+<%- include('layouts/admin-nav.ejs') %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <div class="container-full">
+      <!-- Content Header (Page header) -->	  
+      <div class="content-header">
+          <div class="d-flex align-items-center">
+              <div class="me-auto">
+                  <h4 class="page-title">Questions</h4>
+                  <div class="d-inline-block align-items-center">
+                      <nav>
+                          <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#"><i class="fa  fa-angle-right"></i></a></li>
+                            <li class="breadcrumb-item" aria-current="page">Edit Question</li>
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+              
+          </div>
+      </div>
+
+      <!-- Main content -->
+      <section class="content">
+          <div class="row">
+            <div class="col-lg-12 col-12">
+                <div class="box">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">Edit Question</h4>
+                  </div>
+                  <!-- /.box-header -->
+                  <form class="form"   id="form"  onsubmit="return false;">
+                      <div class="box-body">
+                          
+                          <div class="row">
+                            <div class="alert alert-success mt-2" role="alert" id="success" style="display: none;">
+                       
+                            </div>
+                            <div class="alert alert-danger mt-2" role="alert" id="failed" style="display: none;">
+                             
+                            </div>
+                            <div class="col-md-4">
+                              <div class="form-group">
+                                <label class="form-label">Question</label>
+                                <input type="text" class="form-control" placeholder="Question" id="question" name="question" value="<%= question_details.question %>" required>
+                                <input type="hidden" class="language" id="language" name="language" value="english">
+                              </div>
+                            </div>
+                           
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                  <label class="form-label">Select Intent</label>
+                                  <select class="form-control select2"  id="intent"  name="intent" data-placeholder="Select a intent"
+                                  style="width: 100%;" required>
+                                  <option selected hidden value="<%= question_details.intent %>"><%= intent_details.intent %> - <%= intent_details.node_id %></option>
+                                <% for (var i = 0; i < intents.length; i++) { %>
+                                <option value="<%= intents[i].id %>"><%= intents[i].intent %> - <%= intents[i].node_id %></option>
+                                <% } %>
+                                
+                          </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                              <button type="submit" class="btn btn-primary mt-4">
+                               Save Question
+                              </button>
+                            </div>
+                      </div>
+                      <!-- /.box-body -->
+                      <!-- <div class="box-footer">
+                         
+                          <button type="submit" class="btn btn-primary">
+                          Save Question
+                          </button>
+                      </div>   -->
+                  </form>
+                </div>
+                <!-- /.box -->			
+          </div>
+          </div>
+
+          
+      </section>
+
+    
+    </div>
+</div>
+</div>
+<script src="custom-js/add-question.js"></script>
+<%- include('layouts/footer.ejs') %>
+
+  
