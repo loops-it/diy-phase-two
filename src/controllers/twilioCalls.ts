@@ -213,7 +213,7 @@ export const twilioSurvey = async (req: Request, res: Response, next: NextFuncti
       twiml.say('Thank you for your responses. Goodbye!');
       twiml.hangup();
       res.type('text/xml');
-      return res.send(twiml.toString());res.send(twiml.toString());
+      return res.send(twiml.toString());
     }
   } catch (error) {
     console.error(error);
