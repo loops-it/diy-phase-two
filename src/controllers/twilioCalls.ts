@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import OpenAI from "openai";
+import "dotenv/config";
 import { Pinecone } from '@pinecone-database/pinecone'
 import { PrismaClient } from "@prisma/client";
 import twilio from 'twilio';
-const accountSid = 'AC458893156fa318bd2a6ad408a011ff7a';
-const authToken = 'c0dba76c18513ad5e0bb441af90ed949';
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
+
 
 const prisma = new PrismaClient();
 
