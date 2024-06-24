@@ -32,7 +32,7 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
       input: "speech",
       action: "/twilio-results",
       language: "en-IN",
-      speechModel: "phone_call"
+      speechModel: "phone_call"  
     })
     gather.say(" Please ask your question");
     return res.send(twiml.toString());
