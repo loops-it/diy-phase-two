@@ -37,7 +37,7 @@ import { chatFlowResponse } from './controllers/botFlowChatController';
 import { chatFlowData } from './controllers/botFlowData';
 import { PrismaClient } from '@prisma/client';
 import { handleFileUpload } from './controllers/handleFileUpload';
-import { twilioVoice,twilioResults } from './controllers/twilioCalls';
+import { twilioVoice,twilioResults,twilioCall,twilioSurvey,twilioSurveyResponse } from './controllers/twilioCalls';
 const prisma = new PrismaClient();
 
 const app = express();
@@ -572,6 +572,10 @@ app.post("/chat-bot-save-form-submission", saveFormSubmission);
 
 app.post("/twilio-voice", twilioVoice);
 app.post("/twilio-results", twilioResults);
+
+app.get("/twilio-call", twilioCall);
+app.post("/twilio-survey", twilioSurvey);
+app.post("/twilio-survey-response", twilioSurveyResponse);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

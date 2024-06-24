@@ -2,6 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import OpenAI from "openai";
 import { Pinecone } from '@pinecone-database/pinecone'
 import { PrismaClient } from "@prisma/client";
+import twilio from 'twilio';
+const accountSid = 'AC458893156fa318bd2a6ad408a011ff7a';
+const authToken = 'c0dba76c18513ad5e0bb441af90ed949';
+const client = twilio(accountSid, authToken);
+
 const prisma = new PrismaClient();
 
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
@@ -155,6 +160,80 @@ Standalone question:`;
     })
     gather.say("Do you have any other questions");
     return res.send(twiml.toString());
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+  }
+};
+export const twilioCall = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const numbers = [
+      '+94767878063',
+    ];
+    numbers.forEach((number) => {
+      client.calls.create({
+        url: 'https://diy-phase-two.vercel.app/twilio-survey',
+        to: number,
+        from: '+17692532128',
+      }).then((call) => console.log(call.sid));
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+  }
+};
+
+const callStates: { [key: string]: number } = {};
+const questions = [
+  'What is your favorite color?',
+  'What is your favorite food?',
+  'What is your favorite hobby?'
+];
+export const twilioSurvey = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const callSid = req.body.CallSid;
+    const currentQuestionIndex = callStates[callSid] || 0;
+  
+    if (currentQuestionIndex < questions.length) {
+      const twiml = new VoiceResponse();
+      const gather = twiml.gather({
+        input: "speech",
+        action: `/twilio-survey-response?callSid=${callSid}`,
+        language: "en-IN",
+        speechModel: "phone_call"
+      })
+      gather.say(questions[currentQuestionIndex]);
+      callStates[callSid] = currentQuestionIndex + 1;
+      res.type('text/xml');
+      return res.send(twiml.toString());
+    } else {
+      const twiml = new VoiceResponse();
+      twiml.say('Thank you for your responses. Goodbye!');
+      twiml.hangup();
+      res.type('text/xml');
+      res.send(twiml.toString());
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+  }
+};
+
+export const twilioSurveyResponse = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const callSid = req.query.callSid as string;
+    const transcription = req.body.TranscriptionText;
+    const currentQuestionIndex = callStates[callSid] || 0;
+    console.log(`Call SID: ${callSid}, Question: ${questions[currentQuestionIndex - 1]}, Answer: ${transcription}`);
+    if (currentQuestionIndex < questions.length) {
+      const twiml = new twilio.twiml.VoiceResponse();
+      twiml.redirect('/twilio-survey');
+      res.type('text/xml');
+      res.send(twiml.toString());
+    } else {
+      delete callStates[callSid];
+      res.sendStatus(200);
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
