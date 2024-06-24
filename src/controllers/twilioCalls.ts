@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (
-  !process.env.PINECONE_API_KEY ||
+  !process.env.PINECONE_API_KEY || 
   typeof process.env.PINECONE_API_KEY !== "string"
 ) {
   throw new Error("Pinecone API key is not defined or is not a string.");
