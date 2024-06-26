@@ -261,7 +261,7 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
       language: "en-IN", 
       speechModel: "phone_call"  
     })
-    gather.play('https://api.twilio.com/cowbell.mp3');
+    gather.play('https://genaitech.dev/kodetech-welcome-message.mp3');
     return res.send(twiml.toString());
   } catch (error) {
     console.error(error);
