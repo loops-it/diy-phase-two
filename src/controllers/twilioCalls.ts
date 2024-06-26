@@ -249,7 +249,7 @@ export const twilioSurveyResponse = async (req: Request, res: Response, next: Ne
 };
 
 
-
+// TWILIO FEEDBACK WITH LANGUAGE
 export const twilioVoice = async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.type('xml');
@@ -267,4 +267,7 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
     console.error(error);
     return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
   }
+};
+export const twilioResults = async (req: Request, res: Response, next: NextFunction) => {
+  return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
 };
