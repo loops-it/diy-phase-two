@@ -188,9 +188,9 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
 
 const callStates: { [key: string]: number } = {};
 const questions = [
-  'आपका पसंदीदा रंग कौनसा है?',
-  'आपका पसंदीदा खाना क्या है?',
-  'आपका पसंदीदा शौक क्या है?'
+  'ඔබට සුභ දවසක් වේවා',
+  'ඔබට සුභ දවසක් වේවා',
+  'ඔබට සුභ දවසක් වේවා'
 ];
 export const twilioSurvey = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -202,7 +202,7 @@ export const twilioSurvey = async (req: Request, res: Response, next: NextFuncti
       const gather = twiml.gather({
         input: "speech",
         action: `/twilio-survey-response?callSid=${callSid}`,
-        language: "hi-IN",
+        language: "si-LK",
         speechModel: "phone_call"
       })
       gather.say(questions[currentQuestionIndex]);
