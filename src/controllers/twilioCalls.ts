@@ -170,7 +170,7 @@ Standalone question:`;
 export const twilioCall = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const numbers = [
-      '+94767878063',
+      '+94722794528',
     ];
     numbers.forEach((number) => {
       client.calls.create({
