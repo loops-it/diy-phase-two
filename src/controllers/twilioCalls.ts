@@ -258,8 +258,6 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
     const gather = twiml.gather({
       input: "dtmf",
       action: "/twilio-results",
-      language: "en-IN", 
-      speechModel: "phone_call"  
     })
     gather.play('https://genaitech.dev/kodetech-welcome-message.mp3');
     return res.send(twiml.toString());
@@ -303,14 +301,70 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
     return res.send(twiml.toString());
   }
   else{
-    res.type('text/xml');
+    res.type('xml');
     const gather = twiml.gather({
       input: "dtmf",
-      action: "/twilio-results",
-      language: "en-IN", 
-      speechModel: "phone_call"  
+      action: "/twilio-results", 
     })
     gather.play('https://genaitech.dev/incorrect.mp3');
     return res.send(twiml.toString());
+  }
+};
+
+export const twilioFeedback = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const recordingSid = req.body.RecordingSid as string;
+    const accountSid = process.env.TWILIO_ACCOUNT_SID as string;
+    const authToken = process.env.TWILIO_AUTH_TOKEN as string;
+    let status = "processing";
+    const recording_status = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.json`;
+
+    while (status == "completed") {
+      const response = await fetch(recording_status, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+        }
+      });
+      console.log(response);
+      status = "completed"
+      if (!response.ok) {
+        throw new Error(`Failed to fetch recording: ${response.statusText}`);
+      }
+    }
+
+    // const recordingUrl = https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.mp3;
+    
+
+    
+
+    const audioBuffer = await response.buffer();
+
+    const convertedAudioBuffer = await convertAudio(audioBuffer);
+
+    const filename = 'recording.mp3';
+    const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
+
+    const transcriptionResponse = await openai.audio.transcriptions.create({
+      file,
+      model: 'whisper-1',
+      language: 'en',
+    });
+
+    if (!transcriptionResponse.text) {
+      throw new Error('Transcription failed or resulted in empty text');
+    }
+
+    const transcription = transcriptionResponse.text;
+    console.log(`Transcription: ${transcription}`);
+
+    const twimlResponse = new twiml.VoiceResponse();
+    twimlResponse.say(transcription);
+
+    res.type('text/xml');
+    res.send(twimlResponse.toString());
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', message: 'Internal Server Error' });
   }
 };
