@@ -382,12 +382,9 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
   const transcription = transcriptionResponse.text;
   console.log(`Transcription: ${transcription}`);
   const twiml = new VoiceResponse();
-  const twimlResponse = new twiml.VoiceResponse();
-  twimlResponse.say("You feedback was."+transcription+". Thank you for your feedback");
-
+  twiml.say("You feedback was."+transcription+". Thank you for your feedback");
   res.type('text/xml');
-  res.send(twimlResponse.toString());
-
+  res.send(twiml.toString());
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
