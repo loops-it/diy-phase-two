@@ -178,8 +178,11 @@ const namespace = index.namespace("dfcc-vector-db");
 //TWILIO CALL FUNCTION
 export const twilioCall = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // const numbers = [
+    //   '+94722794528',
+    // ];
     const numbers = [
-      '+94722794528',
+      '+94775437340',
     ];
     numbers.forEach((number) => {
       client.calls.create({
