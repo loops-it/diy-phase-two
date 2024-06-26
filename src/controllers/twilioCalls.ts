@@ -8,6 +8,9 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 import fetch from 'node-fetch';
+import { PassThrough } from 'stream';
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegPath from '@ffmpeg-installer/ffmpeg';
 
 const prisma = new PrismaClient();
 
@@ -345,9 +348,72 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
       }
   } while (responseData.status !== 'completed');
     
-  
+  const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.mp3`;
+
+  const audioResponse = await fetch(recordingUrl, {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+    }
+  });
+
+  if (!audioResponse.ok) {
+    throw new Error(`Failed to fetch recording: ${audioResponse.statusText}`);
+  }
+
+  const audioBuffer = await audioResponse.buffer();
+
+  const convertedAudioBuffer = await convertAudio(audioBuffer);
+
+  const filename = 'recording.mp3';
+  const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
+
+  const transcriptionResponse = await openai.audio.transcriptions.create({
+    file,
+    model: 'whisper-1',
+    language: 'en',
+  });
+
+  if (!transcriptionResponse.text) {
+    throw new Error('Transcription failed or resulted in empty text');
+  }
+
+  const transcription = transcriptionResponse.text;
+  console.log(`Transcription: ${transcription}`);
+  const twiml = new VoiceResponse();
+  const twimlResponse = new twiml.VoiceResponse();
+  twimlResponse.say("You feedback was."+transcription+". Thank you for your feedback");
+
+  res.type('text/xml');
+  res.send(twimlResponse.toString());
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
   }
 };
+
+async function convertAudio(audioBuffer: Buffer): Promise<Buffer> {
+return new Promise<Buffer>((resolve, reject) => {
+  const inputStream = new PassThrough();
+  const outputStream = new PassThrough();
+  const data: Buffer[] = [];
+
+  outputStream.on('data', chunk => data.push(chunk));
+  outputStream.on('end', () => resolve(Buffer.concat(data)));
+  outputStream.on('error', error => {
+    console.error('Output stream error:', error);
+    reject(error);
+  });
+
+  inputStream.end(audioBuffer);
+
+  ffmpeg(inputStream)
+    .on('error', (error) => {
+      console.error('ffmpeg error:', error);
+      reject(error);
+    })
+    .toFormat('mp3')
+    .pipe(outputStream);
+});
+}
