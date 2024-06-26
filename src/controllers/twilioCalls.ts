@@ -256,7 +256,7 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
     const twiml = new VoiceResponse();
     //twiml.say("Hello, This is dfcc chat bot");
     const gather = twiml.gather({
-      input: "speech",
+      input: "dtmf",
       action: "/twilio-results",
       language: "en-IN", 
       speechModel: "phone_call"  
@@ -269,5 +269,49 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
   }
 };
 export const twilioResults = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+  const userInput = req.body.Digits;
+  console.log(userInput);
+  const twiml = new VoiceResponse();
+  if(userInput == "1"){
+    twiml.play('https://genaitech.dev/english-message.mp3');
+    twiml.record({
+      action: '/twilio-feedback',
+      method: 'POST',
+      maxLength: 60
+    });
+    res.type('text/xml');
+    return res.send(twiml.toString());
+  }
+  else if(userInput == "2"){
+    twiml.play('https://genaitech.dev/sinhala-message.mp3');
+    twiml.record({
+      action: '/twilio-feedback',
+      method: 'POST',
+      maxLength: 60
+    });
+    res.type('text/xml');
+    return res.send(twiml.toString());
+  }
+  else if(userInput == "3"){
+    twiml.play('https://genaitech.dev/tamil-message.mp3');
+    twiml.record({
+      action: '/twilio-feedback',
+      method: 'POST',
+      maxLength: 60
+    });
+    res.type('text/xml');
+    return res.send(twiml.toString());
+  }
+  else{
+    res.type('text/xml');
+    res.send(twiml.toString());
+    const gather = twiml.gather({
+      input: "dtmf",
+      action: "/twilio-results",
+      language: "en-IN", 
+      speechModel: "phone_call"  
+    })
+    gather.play('https://genaitech.dev/incorrect.mp3');
+    return res.send(twiml.toString());
+  }
 };
