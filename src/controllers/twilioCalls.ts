@@ -183,6 +183,7 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
     // ];
     const numbers = [
       '+94711808676',
+      '+94772275263'
     ];
     numbers.forEach((number) => {
       client.calls.create({
