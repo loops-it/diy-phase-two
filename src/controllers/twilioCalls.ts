@@ -7,7 +7,7 @@ import twilio from 'twilio';
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
-
+import fetch from 'node-fetch';
 
 const prisma = new PrismaClient();
 
@@ -318,20 +318,30 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     const authToken = process.env.TWILIO_AUTH_TOKEN as string;
     let status = "processing";
     const recording_status = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.json`;
-    console.log(234234234);
-    while (status == "completed") {
-      const response = await fetch(recording_status, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
-        }
-      });
-      console.log(response);
-      status = "completed"
-      if (!response.ok) {
-        throw new Error(`Failed to fetch recording: ${response.statusText}`);
+    const response = await fetch(recording_status, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
       }
+    });
+    console.log(response);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch recording: ${response.statusText}`);
     }
+    console.log(234234234);
+    // while (status == "completed") {
+    //   const response = await fetch(recording_status, {
+    //     method: 'GET',
+    //     headers: {
+    //       'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+    //     }
+    //   });
+    //   console.log(response);
+    //   status = "completed"
+    //   if (!response.ok) {
+    //     throw new Error(`Failed to fetch recording: ${response.statusText}`);
+    //   }
+    // }
 
     // const recordingUrl = https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.mp3;
     
