@@ -325,7 +325,8 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
       }
     });
-    console.log(response);
+    const responseData = await response.json();
+    console.log(responseData);
     if (!response.ok) {
         throw new Error(`Failed to fetch recording: ${response.statusText}`);
     }
