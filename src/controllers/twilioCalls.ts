@@ -183,7 +183,7 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
     ];
     numbers.forEach((number) => {
       client.calls.create({
-        url: 'https://diy-phase-two.vercel.app/twilio-survey',
+        url: 'https://diy-phase-two.vercel.app/twilio-voice',
         to: number,
         from: '+17692532128',
         
