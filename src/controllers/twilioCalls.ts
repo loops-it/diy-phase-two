@@ -316,65 +316,36 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     const recordingSid = req.body.RecordingSid as string;
     const accountSid = process.env.TWILIO_ACCOUNT_SID as string;
     const authToken = process.env.TWILIO_AUTH_TOKEN as string;
-    let status = "processing";
+
     const recording_status = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.json`;
-    console.log(recording_status);
-    const response = await fetch(recording_status, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+    let responseData;
+    do {
+      try {
+          const response = await fetch(recording_status, {
+              method: 'GET',
+              headers: {
+                  'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+              }
+          });
+
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          responseData = await response.json(); 
+
+          console.log('Current status:', responseData.status);
+
+          if (responseData.status !== 'completed') {
+              await new Promise(resolve => setTimeout(resolve, 3000));
+          }
+      } catch (error) {
+          console.error('Error fetching recording status:', error);
+          return;
       }
-    });
-    const responseData = await response.json();
-    console.log(responseData);
-    if (!response.ok) {
-        throw new Error(`Failed to fetch recording: ${response.statusText}`);
-    }
-    console.log(234234234);
-    // while (status == "completed") {
-    //   const response = await fetch(recording_status, {
-    //     method: 'GET',
-    //     headers: {
-    //       'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
-    //     }
-    //   });
-    //   console.log(response);
-    //   status = "completed"
-    //   if (!response.ok) {
-    //     throw new Error(`Failed to fetch recording: ${response.statusText}`);
-    //   }
-    // }
-
-    // const recordingUrl = https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.mp3;
+  } while (responseData.status !== 'completed');
     
-
-    
-
-    // const audioBuffer = await response.buffer();
-
-    // const convertedAudioBuffer = await convertAudio(audioBuffer);
-
-    // const filename = 'recording.mp3';
-    // const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
-
-    // const transcriptionResponse = await openai.audio.transcriptions.create({
-    //   file,
-    //   model: 'whisper-1',
-    //   language: 'en',
-    // });
-
-    // if (!transcriptionResponse.text) {
-    //   throw new Error('Transcription failed or resulted in empty text');
-    // }
-
-    // const transcription = transcriptionResponse.text;
-    // console.log(`Transcription: ${transcription}`);
-
-    // const twimlResponse = new twiml.VoiceResponse();
-    // twimlResponse.say(transcription);
-
-    // res.type('text/xml');
-    // res.send(twimlResponse.toString());
+  
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
