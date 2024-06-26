@@ -338,31 +338,31 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
     
 
-    const audioBuffer = await response.buffer();
+    // const audioBuffer = await response.buffer();
 
-    const convertedAudioBuffer = await convertAudio(audioBuffer);
+    // const convertedAudioBuffer = await convertAudio(audioBuffer);
 
-    const filename = 'recording.mp3';
-    const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
+    // const filename = 'recording.mp3';
+    // const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
 
-    const transcriptionResponse = await openai.audio.transcriptions.create({
-      file,
-      model: 'whisper-1',
-      language: 'en',
-    });
+    // const transcriptionResponse = await openai.audio.transcriptions.create({
+    //   file,
+    //   model: 'whisper-1',
+    //   language: 'en',
+    // });
 
-    if (!transcriptionResponse.text) {
-      throw new Error('Transcription failed or resulted in empty text');
-    }
+    // if (!transcriptionResponse.text) {
+    //   throw new Error('Transcription failed or resulted in empty text');
+    // }
 
-    const transcription = transcriptionResponse.text;
-    console.log(`Transcription: ${transcription}`);
+    // const transcription = transcriptionResponse.text;
+    // console.log(`Transcription: ${transcription}`);
 
-    const twimlResponse = new twiml.VoiceResponse();
-    twimlResponse.say(transcription);
+    // const twimlResponse = new twiml.VoiceResponse();
+    // twimlResponse.say(transcription);
 
-    res.type('text/xml');
-    res.send(twimlResponse.toString());
+    // res.type('text/xml');
+    // res.send(twimlResponse.toString());
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
