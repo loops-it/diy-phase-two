@@ -188,9 +188,9 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
 
 const callStates: { [key: string]: number } = {};
 const questions = [
-  'ඔබට සුභ දවසක් වේවා',
-  'ඔබට සුභ දවසක් වේවා',
-  'ඔබට සුභ දවසක් වේවා'
+  'ඔබට කොහොමද ',
+  'ඔබට කොහොමද ',
+  'ඔබට කොහොමද '
 ];
 export const twilioSurvey = async (req: Request, res: Response, next: NextFunction) => {
   try {
