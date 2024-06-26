@@ -373,7 +373,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
   const transcriptionResponse = await openai.audio.transcriptions.create({
     file,
     model: 'whisper-1',
-    language: language,
+    language: 'en',
   });
 
   if (!transcriptionResponse.text) {
