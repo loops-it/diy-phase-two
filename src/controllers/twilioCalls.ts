@@ -304,7 +304,6 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
   }
   else{
     res.type('text/xml');
-    res.send(twiml.toString());
     const gather = twiml.gather({
       input: "dtmf",
       action: "/twilio-results",
