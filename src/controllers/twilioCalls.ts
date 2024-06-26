@@ -177,6 +177,7 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
         url: 'https://diy-phase-two.vercel.app/twilio-survey',
         to: number,
         from: '+17692532128',
+        
       }).then((call) => console.log(call.sid));
     });
   } catch (error) {
@@ -187,9 +188,9 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
 
 const callStates: { [key: string]: number } = {};
 const questions = [
-  'What is your favorite color?',
-  'What is your favorite food?',
-  'What is your favorite hobby?'
+  'ඔබ කැමතිම වර්ණය කුමක්ද?',
+  'ඔබේ ප්රියතම ආහාරය කුමක්ද?',
+  'ඔබේ ප්රියතම විනෝදාංශය කුමක්ද?'
 ];
 export const twilioSurvey = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -201,7 +202,7 @@ export const twilioSurvey = async (req: Request, res: Response, next: NextFuncti
       const gather = twiml.gather({
         input: "speech",
         action: `/twilio-survey-response?callSid=${callSid}`,
-        language: "en-IN",
+        language: "si-LK",
         speechModel: "phone_call"
       })
       gather.say(questions[currentQuestionIndex]);
