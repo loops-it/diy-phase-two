@@ -11,6 +11,7 @@ import fetch from 'node-fetch';
 import { PassThrough } from 'stream';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
+ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 const prisma = new PrismaClient();
 
