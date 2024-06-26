@@ -202,7 +202,7 @@ export const twilioSurvey = async (req: Request, res: Response, next: NextFuncti
       const gather = twiml.gather({
         input: "speech",
         action: `/twilio-survey-response?callSid=${callSid}`,
-        language: "si-LK",
+        language: "en-IN",
         speechModel: "phone_call"
       })
       gather.say(questions[currentQuestionIndex]);
