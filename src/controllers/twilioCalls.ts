@@ -318,7 +318,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     const authToken = process.env.TWILIO_AUTH_TOKEN as string;
     let status = "processing";
     const recording_status = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.json`;
-
+    console.log(234234234);
     while (status == "completed") {
       const response = await fetch(recording_status, {
         method: 'GET',
