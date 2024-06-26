@@ -277,7 +277,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
   if(userInput == "1"){
     twiml.play('https://genaitech.dev/english-message.mp3');
     twiml.record({
-      action: '/twilio-feedback',
+      action: '/twilio-feedback?lan=en',
       method: 'POST',
       maxLength: 60
     });
@@ -287,7 +287,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
   else if(userInput == "2"){
     twiml.play('https://genaitech.dev/sinhala-message.mp3');
     twiml.record({
-      action: '/twilio-feedback',
+      action: '/twilio-feedback?lan=si',
       method: 'POST',
       maxLength: 60
     });
@@ -297,7 +297,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
   else if(userInput == "3"){
     twiml.play('https://genaitech.dev/tamil-message.mp3');
     twiml.record({
-      action: '/twilio-feedback',
+      action: '/twilio-feedback?lan=ta',
       method: 'POST',
       maxLength: 60
     });
@@ -317,6 +317,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
 
 export const twilioFeedback = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const language = req.query.lan as string;
     const recordingSid = req.body.RecordingSid as string;
     const accountSid = process.env.TWILIO_ACCOUNT_SID as string;
     const authToken = process.env.TWILIO_AUTH_TOKEN as string;
@@ -372,7 +373,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
   const transcriptionResponse = await openai.audio.transcriptions.create({
     file,
     model: 'whisper-1',
-    language: 'en',
+    language: language,
   });
 
   if (!transcriptionResponse.text) {
