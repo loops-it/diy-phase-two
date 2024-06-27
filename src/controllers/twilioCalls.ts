@@ -411,6 +411,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     if (language === 'si') {
       languageToSpeechClient = 'si-LK';
       console.log("laguage : ", languageToSpeechClient);
+      async function GoogleCloudSpeech() {
         const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
         const audio = {
           content: mp3Uri,
@@ -437,9 +438,12 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         } catch (error) {
           console.error('ERROR:', error);
         }
+      }
+      GoogleCloudSpeech()
     } else if (language === 'ta') {
       languageToSpeechClient = 'ta-LK';
       console.log("laguage : ", languageToSpeechClient);
+      async function GoogleCloudSpeech() {
         const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
         const audio = {
           content: mp3Uri,
@@ -466,6 +470,8 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         } catch (error) {
           console.error('ERROR:', error);
         }
+      }
+      GoogleCloudSpeech()
     } else {
       const transcriptionResponse = await openai.audio.transcriptions.create({
         file,
