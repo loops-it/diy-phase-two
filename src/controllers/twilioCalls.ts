@@ -420,9 +420,9 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
 
     async function GoogleCloudSpeech() {
-      // const mp3Uri = '';
+      const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
       const audio = {
-        content: file,
+        content: mp3Uri,
       };
       const config = {
         encoding: 'MP3',
