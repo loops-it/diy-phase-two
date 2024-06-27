@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@google-cloud/speech": "^6.6.1",
     "@google-cloud/translate": "^8.2.0",
     "@prisma/client": "^5.15.0",
     "@types/bcrypt": "^5.0.2",
