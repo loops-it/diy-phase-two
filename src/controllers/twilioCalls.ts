@@ -198,16 +198,16 @@ const namespace = index.namespace("dfcc-vector-db");
 //TWILIO CALL FUNCTION
 export const twilioCall = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // const numbers = [
-    //   '+94722794528',
-    // ];
+    const numbers = [
+      '+94722794528',
+    ];
     // const numbers = [
     //   '+94711808676',
     //   '+94772275263'
     // ];.
-    const numbers = [
-      '+94711562196'
-    ];
+    // const numbers = [
+    //   '+94711562196'
+    // ];
     numbers.forEach((number) => {
       client.calls.create({
         url: 'https://diy-phase-two.vercel.app/twilio-voice',
