@@ -406,6 +406,8 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
     let transcription = "";
     let languageToSpeechClient = '';
+
+
     if (language === 'si') {
       languageToSpeechClient = 'si-LK';
       console.log("laguage : ", languageToSpeechClient);
@@ -440,8 +442,9 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         const transcriptionFile = response.results
           .map(result => result.alternatives[0].transcript)
           .join('\n');
-        console.log(`Transcription: ${transcriptionFile}`);
+        // console.log(`Transcription: ${transcriptionFile}`);
         transcription = transcriptionFile;
+        console.log(`Transcription (Google Cloud): ${transcription}`);
       } catch (error) {
         console.error('ERROR:', error);
       }
@@ -450,17 +453,22 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
     async function wisperModel() {
       //whisper
-      const transcriptionResponse = await openai.audio.transcriptions.create({
-        file,
-        model: 'whisper-1',
-        language: 'en',
-      });
-
-      if (!transcriptionResponse.text) {
-        throw new Error('Transcription failed or resulted in empty text');
+      try {
+        const transcriptionResponse = await openai.audio.transcriptions.create({
+          file,
+          model: 'whisper-1',
+          language: 'en',
+        });
+    
+        if (!transcriptionResponse.text) {
+          throw new Error('Transcription failed or resulted in empty text');
+        }
+    
+        transcription = transcriptionResponse.text;
+        console.log(`Transcription (Whisper Model): ${transcription}`);
+      } catch (error) {
+        console.error('ERROR:', error);
       }
-
-      transcription = transcriptionResponse.text;
     }
 
 
