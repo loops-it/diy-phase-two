@@ -494,6 +494,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         return transcriptionFile;
       } catch (error) {
         console.error('ERROR:', error);
+        console.log('transcribe stopped...')
         return "";
       }
     }
