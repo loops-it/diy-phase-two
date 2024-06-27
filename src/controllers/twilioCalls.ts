@@ -181,8 +181,11 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
     // const numbers = [
     //   '+94722794528',
     // ];
+    // const numbers = [
+    //   '+94711808676',
+    //   '+94772275263'
+    // ];.
     const numbers = [
-      '+94711808676',
       '+94772275263'
     ];
     numbers.forEach((number) => {
@@ -199,62 +202,62 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-const callStates: { [key: string]: number } = {};
-const questions = [
-  'How Are You',
-  'How Are You',
-  'How Are You'
-];
-export const twilioSurvey = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const callSid = req.body.CallSid;
-    const currentQuestionIndex = callStates[callSid] || 0;
+// const callStates: { [key: string]: number } = {};
+// const questions = [
+//   'How Are You',
+//   'How Are You',
+//   'How Are You'
+// ];
+// export const twilioSurvey = async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const callSid = req.body.CallSid;
+//     const currentQuestionIndex = callStates[callSid] || 0;
   
-    if (currentQuestionIndex < questions.length) {
-      const twiml = new VoiceResponse();
-      const gather = twiml.gather({
-        input: "speech",
-        action: `/twilio-survey-response?callSid=${callSid}`,
-        language: "si-LK",
-        speechModel: "phone_call"
-      })
-      gather.say(questions[currentQuestionIndex]);
-      callStates[callSid] = currentQuestionIndex + 1;
-      res.type('text/xml');
-      return res.send(twiml.toString());
-    } else {
-      const twiml = new VoiceResponse();
-      twiml.say('Thank you for your responses. Goodbye!');
-      twiml.hangup();
-      res.type('text/xml');
-      return res.send(twiml.toString());
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
-  }
-};
+//     if (currentQuestionIndex < questions.length) {
+//       const twiml = new VoiceResponse();
+//       const gather = twiml.gather({
+//         input: "speech",
+//         action: `/twilio-survey-response?callSid=${callSid}`,
+//         language: "si-LK",
+//         speechModel: "phone_call"
+//       })
+//       gather.say(questions[currentQuestionIndex]);
+//       callStates[callSid] = currentQuestionIndex + 1;
+//       res.type('text/xml');
+//       return res.send(twiml.toString());
+//     } else {
+//       const twiml = new VoiceResponse();
+//       twiml.say('Thank you for your responses. Goodbye!');
+//       twiml.hangup();
+//       res.type('text/xml');
+//       return res.send(twiml.toString());
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+//   }
+// };
 
-export const twilioSurveyResponse = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const callSid = req.query.callSid as string;
-    const transcription = req.body.TranscriptionText;
-    const currentQuestionIndex = callStates[callSid] || 0;
-    console.log(`Call SID: ${callSid}, Question: ${questions[currentQuestionIndex - 1]}, Answer: ${transcription}`);
-    if (currentQuestionIndex < questions.length) {
-      const twiml = new twilio.twiml.VoiceResponse();
-      twiml.redirect('/twilio-survey');
-      res.type('text/xml');
-      res.send(twiml.toString());
-    } else {
-      delete callStates[callSid];
-      res.sendStatus(200);
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
-  }
-};
+// export const twilioSurveyResponse = async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const callSid = req.query.callSid as string;
+//     const transcription = req.body.TranscriptionText;
+//     const currentQuestionIndex = callStates[callSid] || 0;
+//     console.log(`Call SID: ${callSid}, Question: ${questions[currentQuestionIndex - 1]}, Answer: ${transcription}`);
+//     if (currentQuestionIndex < questions.length) {
+//       const twiml = new twilio.twiml.VoiceResponse();
+//       twiml.redirect('/twilio-survey');
+//       res.type('text/xml');
+//       res.send(twiml.toString());
+//     } else {
+//       delete callStates[callSid];
+//       res.sendStatus(200);
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+//   }
+// };
 
 
 // TWILIO FEEDBACK WITH LANGUAGE
@@ -374,6 +377,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
   const filename = 'recording.mp3';
   const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
 
+  //whisper
   const transcriptionResponse = await openai.audio.transcriptions.create({
     file,
     model: 'whisper-1',
@@ -386,8 +390,12 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
   const transcription = transcriptionResponse.text;
   console.log(`Transcription: ${transcription}`);
+
+
   const twiml = new VoiceResponse();
-  twiml.say("You feedback was."+transcription+". Thank you for your feedback");
+  console.log("user message",transcription);
+  // twiml.say("You feedback was."+transcription+". Thank you for your feedback");
+  twiml.say("Thank you for your feedback");
   res.type('text/xml');
   res.send(twiml.toString());
   } catch (error) {
