@@ -470,8 +470,8 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
     async function GoogleCloudSpeech(languageToSpeechClient: string, audioBuffer: Buffer): Promise<string> {
       console.log("google speech running...")
-      const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
-      const audio = { content: mp3Uri };
+      const audioBytes = audioBuffer.toString('base64');
+      const audio = { content: audioBytes };
       const config = {
         encoding: 'MP3',
         sampleRateHertz: 16000,
