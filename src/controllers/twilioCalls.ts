@@ -298,8 +298,6 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
     const gather = twiml.gather({
       input: "dtmf",
       action: "/twilio-results",
-      timeout: 5,
-      speechTimeout : 5
     })
     gather.play('https://genaitech.dev/kodetech-welcome-message.mp3');
     return res.send(twiml.toString());
