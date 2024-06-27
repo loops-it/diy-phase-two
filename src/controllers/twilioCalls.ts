@@ -197,34 +197,30 @@ const namespace = index.namespace("dfcc-vector-db");
 
 //TWILIO CALL FUNCTION
 export const twilioCall = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const numbers = [
-        '+94722794528',
-      ];
-      // const numbers = [
-      //   '+94711808676',
-      //   '+94772275263'
-      // ];
-      // const numbers = [
-      //   '+94760590887'
-      // ];
-      
-      numbers.forEach((number) => {
-        client.calls.create({
-          url: 'https://diy-phase-two.vercel.app/twilio-voice',
-          to: number,
-          from: '+17692532128',
-        })
-        .then((call) => console.log(`Call SID: ${call.sid}, To: ${call.to}, From: ${call.from}`))
-        .catch((error) => console.error(`Error making call to ${number}:`, error));
-      });
-      
-      res.status(200).json({ status: 'success', message: 'Calls initiated' });
-    } catch (error) {
-      console.error('Internal Server Error:', error);
-      res.status(500).json({ status: 'error', message: 'Internal Server Error' });
-    }
-  };
+  try {
+    const numbers = [
+      '+94722794528',
+    ];
+    // const numbers = [
+    //   '+94711808676',
+    //   '+94772275263'
+    // ];.
+    // const numbers = [
+    //   '+94760590887'
+    // ];
+    numbers.forEach((number) => {
+      client.calls.create({
+        url: 'https://diy-phase-two.vercel.app/twilio-voice',
+        to: number,
+        from: '+17692532128',
+
+      }).then((call) => console.log(call.sid));
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+  }
+};
 export const twilioSurvey = async (req: Request, res: Response, next: NextFunction) => {
   return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
 }
@@ -298,6 +294,8 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
     const gather = twiml.gather({
       input: "dtmf",
       action: "/twilio-results",
+      timeout: 5,
+      speechTimeout : 5
     })
     gather.play('https://genaitech.dev/kodetech-welcome-message.mp3');
     return res.send(twiml.toString());
@@ -494,7 +492,6 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         return transcriptionFile;
       } catch (error) {
         console.error('ERROR:', error);
-        console.log('transcribe stopped...')
         return "";
       }
     }
