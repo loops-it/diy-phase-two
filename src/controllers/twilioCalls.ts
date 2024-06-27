@@ -410,74 +410,80 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
     if (language === 'si') {
       languageToSpeechClient = 'si-LK';
-      console.log("language: ", languageToSpeechClient);
-      GoogleCloudSpeech();
+      console.log("laguage : ", languageToSpeechClient);
+        const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
+        const audio = {
+          content: mp3Uri,
+        };
+        const config = {
+          encoding: 'MP3',
+          sampleRateHertz: 16000,
+          languageCode: languageToSpeechClient,
+        };
+        const request = {
+          audio: audio,
+          config: config,
+        };
+  
+        try {
+          // Detects speech in the audio file
+          const [response] = await clientGoogle.recognize(request);
+          const transcriptionFile = response.results
+            .map(result => result.alternatives[0].transcript)
+            .join('\n');
+          // console.log(`Transcription: ${transcriptionFile}`);
+          transcription = transcriptionFile;
+          console.log(`Transcription (Google Cloud): ${transcription}`);
+        } catch (error) {
+          console.error('ERROR:', error);
+        }
     } else if (language === 'ta') {
       languageToSpeechClient = 'ta-LK';
-      console.log("language: ", languageToSpeechClient);
-      GoogleCloudSpeech();
-    } else {
-      wisperModel();
-    }
-    
-    async function processTranscription() {
-      if (language === 'si' || language === 'ta') {
-        await GoogleCloudSpeech();
-      } else {
-        await wisperModel();
-      }
-      console.log(`Transcription Final: ${transcription}`);
-    }
-
-
-    async function GoogleCloudSpeech() {
-      const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
-      const audio = {
-        content: mp3Uri,
-      };
-      const config = {
-        encoding: 'MP3',
-        sampleRateHertz: 16000,
-        languageCode: languageToSpeechClient,
-      };
-      const request = {
-        audio: audio,
-        config: config,
-      };
-    
-      try {
-        // Detects speech in the audio file
-        const [response] = await clientGoogle.recognize(request);
-        const transcriptionFile = response.results
-          .map(result => result.alternatives[0].transcript)
-          .join('\n');
-        transcription = transcriptionFile;
-        console.log(`Transcription (Google Cloud): ${transcription}`);
-      } catch (error) {
-        console.error('ERROR:', error);
-      }
-    }
-    
-    async function wisperModel() {
-      try {
-        const transcriptionResponse = await openai.audio.transcriptions.create({
-          file,
-          model: 'whisper-1',
-          language: 'en',
-        });
-    
-        if (!transcriptionResponse.text) {
-          throw new Error('Transcription failed or resulted in empty text');
+      console.log("laguage : ", languageToSpeechClient);
+        const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
+        const audio = {
+          content: mp3Uri,
+        };
+        const config = {
+          encoding: 'MP3',
+          sampleRateHertz: 16000,
+          languageCode: languageToSpeechClient,
+        };
+        const request = {
+          audio: audio,
+          config: config,
+        };
+  
+        try {
+          // Detects speech in the audio file
+          const [response] = await clientGoogle.recognize(request);
+          const transcriptionFile = response.results
+            .map(result => result.alternatives[0].transcript)
+            .join('\n');
+          // console.log(`Transcription: ${transcriptionFile}`);
+          transcription = transcriptionFile;
+          console.log(`Transcription (Google Cloud): ${transcription}`);
+        } catch (error) {
+          console.error('ERROR:', error);
         }
-    
-        transcription = transcriptionResponse.text;
-        console.log(`Transcription (Whisper Model): ${transcription}`);
-      } catch (error) {
-        console.error('ERROR:', error);
+    } else {
+      const transcriptionResponse = await openai.audio.transcriptions.create({
+        file,
+        model: 'whisper-1',
+        language: 'en',
+      });
+  
+      if (!transcriptionResponse.text) {
+        throw new Error('Transcription failed or resulted in empty text');
       }
+  
+      transcription = transcriptionResponse.text;
+      console.log(`Transcription (Whisper Model): ${transcription}`);
     }
-    
-    processTranscription();
+
+
+  
+    console.log(`Transcription Final : ${transcription}`);
 
     //whisper
     // const transcriptionResponse = await openai.audio.transcriptions.create({
