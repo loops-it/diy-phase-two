@@ -221,7 +221,12 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
     return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
   }
 };
-
+export const twilioSurvey = async (req: Request, res: Response, next: NextFunction) => {
+    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+}
+export const twilioSurveyResponse = async (req: Request, res: Response, next: NextFunction) => {
+    return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+}
 // const callStates: { [key: string]: number } = {};
 // const questions = [
 //   'How Are You',
