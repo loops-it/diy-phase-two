@@ -11,14 +11,34 @@ import fetch from 'node-fetch';
 import { PassThrough } from 'stream';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
+import speech from '@google-cloud/speech';
+
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 const prisma = new PrismaClient();
 
+const serviceAccountKey = {
+  type: "service_account",
+  project_id: process.env.GOOGLE_PROJECT_ID,
+  private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
+  private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  client_email: process.env.GOOGLE_CLIENT_EMAIL,
+  client_id: process.env.GOOGLE_CLIENT_ID,
+  auth_uri: process.env.GOOGLE_AUTH_URI,
+  token_uri: process.env.GOOGLE_TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_X509_CERT_URL,
+  client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL
+};
+
+const clientGoogle = new speech.SpeechClient({credentials: serviceAccountKey});
+
+// const clientGoogle = new speech.SpeechClient({ keyFilename: process.env.DIY });
+
+
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (
-  !process.env.PINECONE_API_KEY || 
+  !process.env.PINECONE_API_KEY ||
   typeof process.env.PINECONE_API_KEY !== "string"
 ) {
   throw new Error("Pinecone API key is not defined or is not a string.");
@@ -61,7 +81,7 @@ const namespace = index.namespace("dfcc-vector-db");
 //       orderBy: { created_at: 'desc' },
 //     });
 
-    
+
 //     for (var i = 0; i < old_chats.length; i++) {
 //       chatHistory.push({ role: old_chats[i].role, content: old_chats[i].message });
 //     }
@@ -69,7 +89,7 @@ const namespace = index.namespace("dfcc-vector-db");
 //     chatHistory.push({ role: "user", content: user_question });
 
 //     console.log(chatHistory);
-    
+
 //     const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION related to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevent keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the user asks for information like email or address, provide DFCC email and address.
 // ----------
 // CHAT HISTORY: {${chatHistory}}
@@ -186,14 +206,14 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
     //   '+94772275263'
     // ];.
     const numbers = [
-      '+94772275263'
+      '+94711562196'
     ];
     numbers.forEach((number) => {
       client.calls.create({
         url: 'https://diy-phase-two.vercel.app/twilio-voice',
         to: number,
         from: '+17692532128',
-        
+
       }).then((call) => console.log(call.sid));
     });
   } catch (error) {
@@ -212,7 +232,7 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
 //   try {
 //     const callSid = req.body.CallSid;
 //     const currentQuestionIndex = callStates[callSid] || 0;
-  
+
 //     if (currentQuestionIndex < questions.length) {
 //       const twiml = new VoiceResponse();
 //       const gather = twiml.gather({
@@ -281,7 +301,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
   const userInput = req.body.Digits;
   console.log(userInput);
   const twiml = new VoiceResponse();
-  if(userInput == "1"){
+  if (userInput == "1") {
     twiml.play('https://genaitech.dev/english-message.mp3');
     twiml.record({
       action: '/twilio-feedback?lan=en',
@@ -291,7 +311,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
     res.type('text/xml');
     return res.send(twiml.toString());
   }
-  else if(userInput == "2"){
+  else if (userInput == "2") {
     twiml.play('https://genaitech.dev/sinhala-message.mp3');
     twiml.record({
       action: '/twilio-feedback?lan=si',
@@ -301,7 +321,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
     res.type('text/xml');
     return res.send(twiml.toString());
   }
-  else if(userInput == "3"){
+  else if (userInput == "3") {
     twiml.play('https://genaitech.dev/tamil-message.mp3');
     twiml.record({
       action: '/twilio-feedback?lan=ta',
@@ -311,11 +331,11 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
     res.type('text/xml');
     return res.send(twiml.toString());
   }
-  else{
+  else {
     res.type('xml');
     const gather = twiml.gather({
       input: "dtmf",
-      action: "/twilio-results", 
+      action: "/twilio-results",
     })
     gather.play('https://genaitech.dev/incorrect.mp3');
     return res.send(twiml.toString());
@@ -333,71 +353,132 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     let responseData;
     do {
       try {
-          const response = await fetch(recording_status, {
-              method: 'GET',
-              headers: {
-                  'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
-              }
-          });
-
-          if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
+        const response = await fetch(recording_status, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
           }
+        });
 
-          responseData = await response.json(); 
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-          console.log('Current status:', responseData.status);
+        responseData = await response.json();
 
-          if (responseData.status !== 'completed') {
-              await new Promise(resolve => setTimeout(resolve, 3000));
-          }
+        console.log('Current status:', responseData.status);
+
+        if (responseData.status !== 'completed') {
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
       } catch (error) {
-          console.error('Error fetching recording status:', error);
-          return;
+        console.error('Error fetching recording status:', error);
+        return;
       }
-  } while (responseData.status !== 'completed');
-    
-  const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.mp3`;
+    } while (responseData.status !== 'completed');
 
-  const audioResponse = await fetch(recordingUrl, {
-    method: 'GET',
-    headers: {
-      'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+    const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.mp3`;
+
+    const audioResponse = await fetch(recordingUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+      }
+    });
+
+    if (!audioResponse.ok) {
+      throw new Error(`Failed to fetch recording: ${audioResponse.statusText}`);
     }
-  });
 
-  if (!audioResponse.ok) {
-    throw new Error(`Failed to fetch recording: ${audioResponse.statusText}`);
-  }
+    const audioBuffer = await audioResponse.buffer();
 
-  const audioBuffer = await audioResponse.buffer();
+    const convertedAudioBuffer = await convertAudio(audioBuffer);
 
-  const convertedAudioBuffer = await convertAudio(audioBuffer);
-
-  const filename = 'recording.mp3';
-  const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
-
-  //whisper
-  const transcriptionResponse = await openai.audio.transcriptions.create({
-    file,
-    model: 'whisper-1',
-    language: 'en',
-  });
-
-  if (!transcriptionResponse.text) {
-    throw new Error('Transcription failed or resulted in empty text');
-  }
-
-  const transcription = transcriptionResponse.text;
-  console.log(`Transcription: ${transcription}`);
+    const filename = 'recording.mp3';
+    const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
 
 
-  const twiml = new VoiceResponse();
-  console.log("user message",transcription);
-  // twiml.say("You feedback was."+transcription+". Thank you for your feedback");
-  twiml.say("Thank you for your feedback");
-  res.type('text/xml');
-  res.send(twiml.toString());
+
+    let transcription = "";
+    let languageToSpeechClient = '';
+    if (language === 'si') {
+      languageToSpeechClient = 'si-LK';
+      console.log("laguage : ", languageToSpeechClient);
+      GoogleCloudSpeech()
+    } else if (language === 'ta') {
+      languageToSpeechClient = 'ta-LK';
+      console.log("laguage : ", languageToSpeechClient);
+      GoogleCloudSpeech()
+    } else {
+      wisperModel()
+    }
+
+
+    async function GoogleCloudSpeech() {
+      // const mp3Uri = '';
+      const audio = {
+        content: file,
+      };
+      const config = {
+        encoding: 'MP3',
+        sampleRateHertz: 16000,
+        languageCode: languageToSpeechClient,
+      };
+      const request = {
+        audio: audio,
+        config: config,
+      };
+
+      try {
+        // Detects speech in the audio file
+        const [response] = await clientGoogle.recognize(request);
+        const transcription = response.results
+          .map(result => result.alternatives[0].transcript)
+          .join('\n');
+        console.log(`Transcription: ${transcription}`);
+      } catch (error) {
+        console.error('ERROR:', error);
+      }
+    }
+
+
+    async function wisperModel() {
+      //whisper
+      const transcriptionResponse = await openai.audio.transcriptions.create({
+        file,
+        model: 'whisper-1',
+        language: 'en',
+      });
+
+      if (!transcriptionResponse.text) {
+        throw new Error('Transcription failed or resulted in empty text');
+      }
+
+      transcription = transcriptionResponse.text;
+    }
+
+
+    //whisper
+    // const transcriptionResponse = await openai.audio.transcriptions.create({
+    //   file,
+    //   model: 'whisper-1',
+    //   language: 'en',
+    // });
+
+    // if (!transcriptionResponse.text) {
+    //   throw new Error('Transcription failed or resulted in empty text');
+    // }
+
+    // const transcription = transcriptionResponse.text;
+    console.log(`Transcription: ${transcription}`);
+
+
+    const twiml = new VoiceResponse();
+    console.log("user message", transcription);
+    // twiml.say("You feedback was."+transcription+". Thank you for your feedback");
+    twiml.say("Thank you for your feedback");
+    res.type('text/xml');
+    res.send(twiml.toString());
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
@@ -405,26 +486,26 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 };
 
 async function convertAudio(audioBuffer: Buffer): Promise<Buffer> {
-return new Promise<Buffer>((resolve, reject) => {
-  const inputStream = new PassThrough();
-  const outputStream = new PassThrough();
-  const data: Buffer[] = [];
+  return new Promise<Buffer>((resolve, reject) => {
+    const inputStream = new PassThrough();
+    const outputStream = new PassThrough();
+    const data: Buffer[] = [];
 
-  outputStream.on('data', chunk => data.push(chunk));
-  outputStream.on('end', () => resolve(Buffer.concat(data)));
-  outputStream.on('error', error => {
-    console.error('Output stream error:', error);
-    reject(error);
-  });
-
-  inputStream.end(audioBuffer);
-
-  ffmpeg(inputStream)
-    .on('error', (error) => {
-      console.error('ffmpeg error:', error);
+    outputStream.on('data', chunk => data.push(chunk));
+    outputStream.on('end', () => resolve(Buffer.concat(data)));
+    outputStream.on('error', error => {
+      console.error('Output stream error:', error);
       reject(error);
-    })
-    .toFormat('mp3')
-    .pipe(outputStream);
-});
+    });
+
+    inputStream.end(audioBuffer);
+
+    ffmpeg(inputStream)
+      .on('error', (error) => {
+        console.error('ffmpeg error:', error);
+        reject(error);
+      })
+      .toFormat('mp3')
+      .pipe(outputStream);
+  });
 }
