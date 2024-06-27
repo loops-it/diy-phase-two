@@ -11,7 +11,7 @@ import fetch from 'node-fetch';
 import { PassThrough } from 'stream';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
-import speech from '@google-cloud/speech';
+const speech = require('@google-cloud/speech');
 
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 
