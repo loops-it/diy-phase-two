@@ -355,7 +355,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     const authToken = process.env.TWILIO_AUTH_TOKEN as string;
 
     const recording_status = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.json`;
-    let responseData: { status: string; };
+    let responseData;
     do {
       try {
         const response = await fetch(recording_status, {
@@ -404,32 +404,89 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
 
 
+    // let transcription = "";
+    // let languageToSpeechClient = '';
+
+
+    // if (language === 'si') {
+    //   languageToSpeechClient = 'si-LK';
+    //   console.log("laguage : ", languageToSpeechClient);
+      
+
+    //   async function GoogleCloudSpeech() {
+    //     const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
+    //     const audio = {
+    //       content: mp3Uri,
+    //     };
+    //     const config = {
+    //       encoding: 'MP3',
+    //       sampleRateHertz: 16000,
+    //       languageCode: languageToSpeechClient,
+    //     };
+    //     const request = {
+    //       audio: audio,
+    //       config: config,
+    //     };
+  
+    //     try {
+    //       const [response] = await clientGoogle.recognize(request);
+    //       const transcriptionFile = response.results
+    //         .map(result => result.alternatives[0].transcript)
+    //         .join('\n');
+    //       transcription = transcriptionFile;
+    //       console.log(`Transcription (Google Cloud): ${transcription}`);
+    //     } catch (error) {
+    //       console.error('ERROR:', error);
+    //     }
+    //   }
+    //   GoogleCloudSpeech()
+
+    // } else {
+    //   wisperModel()
+    // }
+
+    // async function wisperModel() {
+    //   //whisper
+    //   try {
+    //     const transcriptionResponse = await openai.audio.transcriptions.create({
+    //       file,
+    //       model: 'whisper-1',
+    //       language: 'en',
+    //     });
+
+    //     if (!transcriptionResponse.text) {
+    //       throw new Error('Transcription failed or resulted in empty text');
+    //     }
+
+    //     transcription = transcriptionResponse.text;
+    //     console.log(`Transcription (Whisper Model): ${transcription}`);
+    //   } catch (error) {
+    //     console.error('ERROR:', error);
+    //   }
+    // }
+    // console.log(`Transcription: ${transcription}`);
+
     let transcription = "";
-    let languageToSpeechClient = "";
 
-    async function GoogleCloudSpeech(languageToSpeechClient: string, mp3Uri: fetch.RequestInfo) {
-      const audioBytes = await fetch(mp3Uri).then(res => res.arrayBuffer()).then(Buffer.from);
-
-      const audio = {
-        content: audioBytes.toString('base64'),
-      };
+    async function GoogleCloudSpeech(languageToSpeechClient: string, audioBuffer: Buffer): Promise<string> {
+      console.log("google speech running...")
+      const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
+      const audio = { content: mp3Uri };
       const config = {
         encoding: 'MP3',
         sampleRateHertz: 16000,
         languageCode: languageToSpeechClient,
       };
-      const request = {
-        audio: audio,
-        config: config,
-      };
+      const request = { audio: audio, config: config };
 
       try {
-        // Detects speech in the audio file
+        console.log("transcribing ......")
         const [response] = await clientGoogle.recognize(request);
         const transcriptionFile = response.results
-          .map((result: { alternatives: { transcript: any; }[]; }) => result.alternatives[0].transcript)
+          .map(result => result.alternatives[0].transcript)
           .join('\n');
         console.log(`Transcription (Google Cloud): ${transcriptionFile}`);
+        console.log("transcribing ended ...")
         return transcriptionFile;
       } catch (error) {
         console.error('ERROR:', error);
@@ -437,16 +494,9 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
       }
     }
 
-    async function transcribeAudio(language: string, mp3Uri: string) {
-      if (language === 'si') {
-        languageToSpeechClient = 'si-LK';
-        console.log("Language: ", languageToSpeechClient);
-        transcription = await GoogleCloudSpeech(languageToSpeechClient, mp3Uri);
-      } else if (language === 'ta') {
-        languageToSpeechClient = 'ta-LK';
-        console.log("Language: ", languageToSpeechClient);
-        transcription = await GoogleCloudSpeech(languageToSpeechClient, mp3Uri);
-      } else {
+    async function whisperModel(file: File): Promise<string> {
+      try {
+        console.log("wisper running...")
         const transcriptionResponse = await openai.audio.transcriptions.create({
           file,
           model: 'whisper-1',
@@ -457,15 +507,27 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
           throw new Error('Transcription failed or resulted in empty text');
         }
 
-        transcription = transcriptionResponse.text;
-        console.log(`Transcription (Whisper Model): ${transcription}`);
+        console.log(`Transcription (Whisper Model): ${transcriptionResponse.text}`);
+        return transcriptionResponse.text;
+      } catch (error) {
+        console.error('ERROR:', error);
+        return "";
       }
-
-      console.log(`Transcription Final: ${transcription}`);
     }
 
-    const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
-    transcribeAudio(language, mp3Uri);
+    if (language === 'si' || language === 'ta') {
+      const languageToSpeechClient = language === 'si' ? 'si-LK' : 'ta-LK';
+      console.log("Language: ", languageToSpeechClient);
+      transcription = await GoogleCloudSpeech(languageToSpeechClient, audioBuffer);
+    } else {
+      transcription = await whisperModel(file);
+    }
+
+    if (!transcription) {
+      throw new Error('Transcription failed or resulted in empty text');
+    }
+
+    console.log(`Transcription Final: ${transcription}`);
 
     //whisper
     // const transcriptionResponse = await openai.audio.transcriptions.create({
@@ -479,7 +541,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     // }
 
     // const transcription = transcriptionResponse.text;
-
+    
 
 
     const twiml = new VoiceResponse();
@@ -510,7 +572,7 @@ async function convertAudio(audioBuffer: Buffer): Promise<Buffer> {
     inputStream.end(audioBuffer);
 
     ffmpeg(inputStream)
-      .on('error', (error: any) => {
+      .on('error', (error) => {
         console.error('ffmpeg error:', error);
         reject(error);
       })
