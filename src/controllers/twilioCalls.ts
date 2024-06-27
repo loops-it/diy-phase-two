@@ -515,13 +515,22 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
       }
     }
 
-    if (language === 'si' || language === 'ta') {
-      const languageToSpeechClient = language === 'si' ? 'si-LK' : 'ta-LK';
+    // if (language === 'si' || language === 'ta') {
+    //   const languageToSpeechClient = language === 'si' ? 'si-LK' : 'ta-LK';
+    //   console.log("Language: ", languageToSpeechClient);
+    //   transcription = await GoogleCloudSpeech(languageToSpeechClient, audioBuffer);
+    // } else {
+    //   transcription = await whisperModel(file);
+    // }
+
+    if (language === 'si' || language === 'ta' || language === 'en') {
+      const languageToSpeechClient = language === 'si' ? 'si-LK' : (language === 'ta' ? 'ta-LK' : 'en-IN');
       console.log("Language: ", languageToSpeechClient);
       transcription = await GoogleCloudSpeech(languageToSpeechClient, audioBuffer);
-    } else {
-      transcription = await whisperModel(file);
-    }
+    } 
+    // else {
+    //   transcription = await whisperModel(file);
+    // }
 
     if (!transcription) {
       throw new Error('Transcription failed or resulted in empty text');
