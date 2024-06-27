@@ -11,26 +11,26 @@ import fetch from 'node-fetch';
 import { PassThrough } from 'stream';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
-const speech = require('@google-cloud/speech');
+// const speech = require('@google-cloud/speech');
 
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 const prisma = new PrismaClient();
 
-const serviceAccountKey = {
-  type: "service_account",
-  project_id: process.env.GOOGLE_PROJECT_ID,
-  private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
-  private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  client_email: process.env.GOOGLE_CLIENT_EMAIL,
-  client_id: process.env.GOOGLE_CLIENT_ID,
-  auth_uri: process.env.GOOGLE_AUTH_URI,
-  token_uri: process.env.GOOGLE_TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_X509_CERT_URL,
-  client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL
-};
+// const serviceAccountKey = {
+//   type: "service_account",
+//   project_id: process.env.GOOGLE_PROJECT_ID,
+//   private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
+//   private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+//   client_email: process.env.GOOGLE_CLIENT_EMAIL,
+//   client_id: process.env.GOOGLE_CLIENT_ID,
+//   auth_uri: process.env.GOOGLE_AUTH_URI,
+//   token_uri: process.env.GOOGLE_TOKEN_URI,
+//   auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_X509_CERT_URL,
+//   client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL
+// };
 
-const clientGoogle = new speech.SpeechClient({credentials: serviceAccountKey});
+// const clientGoogle = new speech.SpeechClient({credentials: serviceAccountKey});
 
 // const clientGoogle = new speech.SpeechClient({ keyFilename: process.env.DIY });
 
@@ -399,50 +399,50 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
 
 
-    let transcription = "";
-    let languageToSpeechClient = '';
-    if (language === 'si') {
-      languageToSpeechClient = 'si-LK';
-      console.log("laguage : ", languageToSpeechClient);
-      GoogleCloudSpeech()
-    } else if (language === 'ta') {
-      languageToSpeechClient = 'ta-LK';
-      console.log("laguage : ", languageToSpeechClient);
-      GoogleCloudSpeech()
-    } else {
-      wisperModel()
-    }
+    // let transcription = "";
+    // let languageToSpeechClient = '';
+    // if (language === 'si') {
+    //   languageToSpeechClient = 'si-LK';
+    //   console.log("laguage : ", languageToSpeechClient);
+    //   GoogleCloudSpeech()
+    // } else if (language === 'ta') {
+    //   languageToSpeechClient = 'ta-LK';
+    //   console.log("laguage : ", languageToSpeechClient);
+    //   GoogleCloudSpeech()
+    // } else {
+    //   wisperModel()
+    // }
 
 
-    async function GoogleCloudSpeech() {
-      // const mp3Uri = '';
-      const audio = {
-        content: file,
-      };
-      const config = {
-        encoding: 'MP3',
-        sampleRateHertz: 16000,
-        languageCode: languageToSpeechClient,
-      };
-      const request = {
-        audio: audio,
-        config: config,
-      };
+    // async function GoogleCloudSpeech() {
+    //   // const mp3Uri = '';
+    //   const audio = {
+    //     content: file,
+    //   };
+    //   const config = {
+    //     encoding: 'MP3',
+    //     sampleRateHertz: 16000,
+    //     languageCode: languageToSpeechClient,
+    //   };
+    //   const request = {
+    //     audio: audio,
+    //     config: config,
+    //   };
 
-      try {
-        // Detects speech in the audio file
-        const [response] = await clientGoogle.recognize(request);
-        const transcription = response.results
-          .map(result => result.alternatives[0].transcript)
-          .join('\n');
-        console.log(`Transcription: ${transcription}`);
-      } catch (error) {
-        console.error('ERROR:', error);
-      }
-    }
+    //   try {
+    //     // Detects speech in the audio file
+    //     const [response] = await clientGoogle.recognize(request);
+    //     const transcription = response.results
+    //       .map(result => result.alternatives[0].transcript)
+    //       .join('\n');
+    //     console.log(`Transcription: ${transcription}`);
+    //   } catch (error) {
+    //     console.error('ERROR:', error);
+    //   }
+    // }
 
 
-    async function wisperModel() {
+    // async function wisperModel() {
       //whisper
       const transcriptionResponse = await openai.audio.transcriptions.create({
         file,
@@ -454,8 +454,8 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         throw new Error('Transcription failed or resulted in empty text');
       }
 
-      transcription = transcriptionResponse.text;
-    }
+      const transcription = transcriptionResponse.text;
+    // }
 
 
     //whisper
