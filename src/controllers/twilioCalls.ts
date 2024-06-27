@@ -410,14 +410,23 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
 
     if (language === 'si') {
       languageToSpeechClient = 'si-LK';
-      console.log("laguage : ", languageToSpeechClient);
-      GoogleCloudSpeech()
+      console.log("language: ", languageToSpeechClient);
+      GoogleCloudSpeech();
     } else if (language === 'ta') {
       languageToSpeechClient = 'ta-LK';
-      console.log("laguage : ", languageToSpeechClient);
-      GoogleCloudSpeech()
+      console.log("language: ", languageToSpeechClient);
+      GoogleCloudSpeech();
     } else {
-      wisperModel()
+      wisperModel();
+    }
+    
+    async function processTranscription() {
+      if (language === 'si' || language === 'ta') {
+        await GoogleCloudSpeech();
+      } else {
+        await wisperModel();
+      }
+      console.log(`Transcription Final: ${transcription}`);
     }
 
 
@@ -435,24 +444,21 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         audio: audio,
         config: config,
       };
-
+    
       try {
         // Detects speech in the audio file
         const [response] = await clientGoogle.recognize(request);
         const transcriptionFile = response.results
           .map(result => result.alternatives[0].transcript)
           .join('\n');
-        // console.log(`Transcription: ${transcriptionFile}`);
         transcription = transcriptionFile;
         console.log(`Transcription (Google Cloud): ${transcription}`);
       } catch (error) {
         console.error('ERROR:', error);
       }
     }
-
-
+    
     async function wisperModel() {
-      //whisper
       try {
         const transcriptionResponse = await openai.audio.transcriptions.create({
           file,
@@ -470,7 +476,8 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
         console.error('ERROR:', error);
       }
     }
-
+    
+    processTranscription();
 
     //whisper
     // const transcriptionResponse = await openai.audio.transcriptions.create({
@@ -484,7 +491,7 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     // }
 
     // const transcription = transcriptionResponse.text;
-    console.log(`Transcription: ${transcription}`);
+
 
 
     const twiml = new VoiceResponse();
