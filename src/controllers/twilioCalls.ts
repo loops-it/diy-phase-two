@@ -418,7 +418,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
           input: "dtmf",
           action: "/twilio-results",
         });
-        gather.play('https://diy-phase-two.vercel.app/incorrect-message.mp3');
+        gather.play('https://diy-phase-two.vercel.app/incorrectMessage.mp3');
         // gather.say('Incorrect input');
       }
   
@@ -575,7 +575,20 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     const twiml = new VoiceResponse();
     console.log("user message", transcription);
     // twiml.say("You feedback was."+transcription+". Thank you for your feedback");
-    twiml.say("Thank you for your feedback");
+    // twiml.say("Thank you for your feedback");
+
+    if (language === "en") {
+      // twiml.play('https://genaitech.dev/english-message.mp3');
+      twiml.say("Thank you for your feedback.");
+      // twiml.play('https://diy-phase-two.vercel.app/audio/thankyouEnglish.mp3');
+    } else if (language === "si") {
+      twiml.play('https://diy-phase-two.vercel.app/audio/thankyouSinhala.mp3');
+      // twiml.say("Please leave your message after the beep sound.");
+    } else if (language === "ta") {
+      twiml.play('https://diy-phase-two.vercel.app/audio/thankyouTamil.mp3');
+      // twiml.say("Please leave your message after the beep sound.");
+    } 
+
     res.type('text/xml');
     res.send(twiml.toString());
   } catch (error) {
