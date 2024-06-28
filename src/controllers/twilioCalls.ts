@@ -332,18 +332,22 @@ export const twilioSurveyResponse = async (req: Request, res: Response, next: Ne
 //     return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
 //   }
 // };
+
+// timeout: 5,
+// speechTimeout : 5
+
 export const twilioVoice = async (req: Request, res: Response, next: NextFunction) => {
     try {
       res.type('xml');
       const twiml = new VoiceResponse();
-      //twiml.say("Hello, This is dfcc chat bot");
+      twiml.say("Hi, This is Kodetech private limited.");
       const gather = twiml.gather({
         input: "dtmf",
         action: "/twilio-results",
-        timeout: 5,
-        speechTimeout : 5
       });
-      gather.play('https://genaitech.dev/kodetech-welcome-message.mp3');
+      // gather.play('https://genaitech.dev/kodetech-welcome-message.mp3');
+      gather.say("press 1 for English. \n press 2 for Sinhala. \n press 3 for Tamil.");
+      twiml.say('We didn\'t receive any input. Goodbye!');
       res.send(twiml.toString());
     } catch (error) {
       console.error(error);
@@ -401,17 +405,21 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
   
     try {
       if (userInput === "1") {
-        twiml.play('https://genaitech.dev/english-message.mp3');
+        // twiml.play('https://genaitech.dev/english-message.mp3');
+        twiml.say("Please leave your message after the beep sound.");
       } else if (userInput === "2") {
-        twiml.play('https://genaitech.dev/sinhala-message.mp3');
+        // twiml.play('https://genaitech.dev/sinhala-message.mp3');
+        twiml.say("Please leave your message after the beep sound.");
       } else if (userInput === "3") {
-        twiml.play('https://genaitech.dev/tamil-message.mp3');
+        // twiml.play('https://genaitech.dev/tamil-message.mp3');
+        twiml.say("Please leave your message after the beep sound.");
       } else {
         const gather = twiml.gather({
           input: "dtmf",
           action: "/twilio-results",
         });
-        gather.play('https://genaitech.dev/incorrect.mp3');
+        // gather.play('https://genaitech.dev/incorrect.mp3');
+        gather.say('Incorrect input');
       }
   
       if (["1", "2", "3"].includes(userInput)) {
@@ -484,70 +492,6 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
     const filename = 'recording.mp3';
     const file = new File([convertedAudioBuffer], filename, { type: 'audio/mp3' });
 
-
-
-    // let transcription = "";
-    // let languageToSpeechClient = '';
-
-
-    // if (language === 'si') {
-    //   languageToSpeechClient = 'si-LK';
-    //   console.log("laguage : ", languageToSpeechClient);
-      
-
-    //   async function GoogleCloudSpeech() {
-    //     const mp3Uri = 'https://genaitech.dev/sinhala-message.mp3';
-    //     const audio = {
-    //       content: mp3Uri,
-    //     };
-    //     const config = {
-    //       encoding: 'MP3',
-    //       sampleRateHertz: 16000,
-    //       languageCode: languageToSpeechClient,
-    //     };
-    //     const request = {
-    //       audio: audio,
-    //       config: config,
-    //     };
-  
-    //     try {
-    //       const [response] = await clientGoogle.recognize(request);
-    //       const transcriptionFile = response.results
-    //         .map(result => result.alternatives[0].transcript)
-    //         .join('\n');
-    //       transcription = transcriptionFile;
-    //       console.log(`Transcription (Google Cloud): ${transcription}`);
-    //     } catch (error) {
-    //       console.error('ERROR:', error);
-    //     }
-    //   }
-    //   GoogleCloudSpeech()
-
-    // } else {
-    //   wisperModel()
-    // }
-
-    // async function wisperModel() {
-    //   //whisper
-    //   try {
-    //     const transcriptionResponse = await openai.audio.transcriptions.create({
-    //       file,
-    //       model: 'whisper-1',
-    //       language: 'en',
-    //     });
-
-    //     if (!transcriptionResponse.text) {
-    //       throw new Error('Transcription failed or resulted in empty text');
-    //     }
-
-    //     transcription = transcriptionResponse.text;
-    //     console.log(`Transcription (Whisper Model): ${transcription}`);
-    //   } catch (error) {
-    //     console.error('ERROR:', error);
-    //   }
-    // }
-    // console.log(`Transcription: ${transcription}`);
-
     let transcription = "";
 
     async function GoogleCloudSpeech(languageToSpeechClient: string, audioBuffer: Buffer): Promise<string> {
@@ -576,33 +520,25 @@ export const twilioFeedback = async (req: Request, res: Response, next: NextFunc
       }
     }
 
-    async function whisperModel(file: File): Promise<string> {
-      try {
-        console.log("wisper running...")
-        const transcriptionResponse = await openai.audio.transcriptions.create({
-          file,
-          model: 'whisper-1',
-          language: 'en',
-        });
+    // async function whisperModel(file: File): Promise<string> {
+    //   try {
+    //     console.log("wisper running...")
+    //     const transcriptionResponse = await openai.audio.transcriptions.create({
+    //       file,
+    //       model: 'whisper-1',
+    //       language: 'en',
+    //     });
 
-        if (!transcriptionResponse.text) {
-          throw new Error('Transcription failed or resulted in empty text');
-        }
+    //     if (!transcriptionResponse.text) {
+    //       throw new Error('Transcription failed or resulted in empty text');
+    //     }
 
-        console.log(`Transcription (Whisper Model): ${transcriptionResponse.text}`);
-        return transcriptionResponse.text;
-      } catch (error) {
-        console.error('ERROR:', error);
-        return "";
-      }
-    }
-
-    // if (language === 'si' || language === 'ta') {
-    //   const languageToSpeechClient = language === 'si' ? 'si-LK' : 'ta-LK';
-    //   console.log("Language: ", languageToSpeechClient);
-    //   transcription = await GoogleCloudSpeech(languageToSpeechClient, audioBuffer);
-    // } else {
-    //   transcription = await whisperModel(file);
+    //     console.log(`Transcription (Whisper Model): ${transcriptionResponse.text}`);
+    //     return transcriptionResponse.text;
+    //   } catch (error) {
+    //     console.error('ERROR:', error);
+    //     return "";
+    //   }
     // }
 
     if (language === 'si' || language === 'ta' || language === 'en') {
