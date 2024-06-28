@@ -340,13 +340,13 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
     try {
       res.type('xml');
       const twiml = new VoiceResponse();
-      twiml.say("Hi, This is Kodetech private limited.");
+      // twiml.say("Hi, This is Kodetech private limited.");
       const gather = twiml.gather({
         input: "dtmf",
         action: "/twilio-results",
       });
-      // gather.play('https://genaitech.dev/kodetech-welcome-message.mp3');
-      gather.say("press 1 for English. \n press 2 for Sinhala. \n press 3 for Tamil.");
+      gather.play('https://diy-phase-two.vercel.app/audio/kodetech-welcome-message.mp3');
+      // gather.say("press 1 for English. \n press 2 for Sinhala. \n press 3 for Tamil.");
       twiml.say('We didn\'t receive any input. Goodbye!');
       res.send(twiml.toString());
     } catch (error) {
@@ -400,26 +400,26 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
 // };
 export const twilioResults = async (req: Request, res: Response, next: NextFunction) => {
     const userInput = req.body.Digits;
-    console.log(userInput);
+    console.log("User Pressed No : ", userInput);
     const twiml = new VoiceResponse();
   
     try {
       if (userInput === "1") {
         // twiml.play('https://genaitech.dev/english-message.mp3');
-        twiml.say("Please leave your message after the beep sound.");
+        twiml.say("Please give us your feedback after the beep.");
       } else if (userInput === "2") {
-        // twiml.play('https://genaitech.dev/sinhala-message.mp3');
-        twiml.say("Please leave your message after the beep sound.");
+        twiml.play('https://diy-phase-two.vercel.app/audio/sinhala-message.mp3');
+        // twiml.say("Please leave your message after the beep sound.");
       } else if (userInput === "3") {
-        // twiml.play('https://genaitech.dev/tamil-message.mp3');
-        twiml.say("Please leave your message after the beep sound.");
+        twiml.play('https://diy-phase-two.vercel.app/audio/tamil-message.mp3');
+        // twiml.say("Please leave your message after the beep sound.");
       } else {
         const gather = twiml.gather({
           input: "dtmf",
           action: "/twilio-results",
         });
-        // gather.play('https://genaitech.dev/incorrect.mp3');
-        gather.say('Incorrect input');
+        gather.play('https://diy-phase-two.vercel.app/incorrect-message.mp3');
+        // gather.say('Incorrect input');
       }
   
       if (["1", "2", "3"].includes(userInput)) {
