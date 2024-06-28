@@ -169,6 +169,15 @@ app.get('/agent', (req: Request, res: Response) => {
     const errorMessage = req.flash('error')[0];
     res.render('agent', {successMessage: successMessage,errorMessage: errorMessage});
 });
+app.get('/leads', adminLogged, async (req: Request, res: Response) => {
+  const forms = await prisma.node.findMany({where: { type: "formGroup" }});
+  res.render('leads', {forms: forms});
+});
+app.get('/view-leads', adminLogged, async (req: Request, res: Response) => {
+  let node_id: string = req.query.id as string;
+  const leads = await prisma.flowFormSubmissions.findMany({where: { form_id: node_id }});
+res.render('view-leads', { leads: leads });
+});
 app.get('/conversation-history', adminLogged, async (req: Request, res: Response) => {
     const chats = await prisma.botChats.groupBy({
       by: ['message_id']

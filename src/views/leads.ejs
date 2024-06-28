@@ -1,0 +1,76 @@
+<%- include('layouts/header.ejs') %>
+<%- include('layouts/admin-nav.ejs') %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <div class="container-full">
+      <!-- Content Header (Page header) -->	  
+      <div class="content-header">
+          <div class="d-flex align-items-center">
+              <div class="me-auto">
+                  <h4 class="page-title">Leads</h4>
+                  <div class="d-inline-block align-items-center">
+                      <nav>
+                          <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#"><i class="fa  fa-angle-right"></i></a></li>
+                              <li class="breadcrumb-item" aria-current="page">Leads</li>
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+              
+          </div>
+      </div>
+
+      <!-- Main content -->
+      <section class="content">
+          <div class="row">
+              <div class="col-12">
+                  <div class="box">
+                      <div class="box-header with-border">
+                        <h4 class="box-title">Select a form</h4>
+                      </div>
+                      <div class="box-body">
+                        <div class="table-responsive">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Form ID</th>
+                                        <th>Intent</th>
+                                        <th>Language</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (var i = 0; i < forms.length; i++) { %>
+                                       
+                                        <tr>
+                                            <td><%= forms[i].node_id %></td>
+                                            <td ><%= forms[i].intent %></td>
+                                            <td ><%= forms[i].language %></td>
+                                            <td class="">
+                                                <div class="clearfix">
+                                                    <a href="/view-leads?id=<%= forms[i].node_id %>"><button type="button" class="waves-effect waves-light btn btn-info mb-5 btn-xs">View Leads</button></a>
+                                                 </div>
+                                                
+                                            </td>
+                                        </tr>
+                                      <% } %>
+                                    
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+                      </div>
+                      <!-- /.box-body -->
+                     
+                  </div>
+              </div>
+          </div>
+      </section>
+
+    
+    </div>
+</div>
+</div>
+
+<%- include('layouts/footer.ejs') %>
