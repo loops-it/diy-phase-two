@@ -345,7 +345,7 @@ export const twilioVoice = async (req: Request, res: Response, next: NextFunctio
         input: "dtmf",
         action: "/twilio-results",
       });
-      gather.play('https://diy-phase-two.vercel.app/audio/kodetech-welcome-message.mp3');
+      gather.play('https://diy-phase-two.vercel.app/audio/welcome-message.mp3');
       // gather.say("press 1 for English. \n press 2 for Sinhala. \n press 3 for Tamil.");
       twiml.say('We didn\'t receive any input. Goodbye!');
       res.send(twiml.toString());
@@ -408,10 +408,10 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
         // twiml.play('https://genaitech.dev/english-message.mp3');
         twiml.say("Please give us your feedback after the beep.");
       } else if (userInput === "2") {
-        twiml.play('https://diy-phase-two.vercel.app/audio/sinhala-message.mp3');
+        twiml.play('https://diy-phase-two.vercel.app/audio/sinhalaMessage.mp3');
         // twiml.say("Please leave your message after the beep sound.");
       } else if (userInput === "3") {
-        twiml.play('https://diy-phase-two.vercel.app/audio/tamil-message.mp3');
+        twiml.play('https://diy-phase-two.vercel.app/audio/tamilMessage.mp3');
         // twiml.say("Please leave your message after the beep sound.");
       } else {
         const gather = twiml.gather({
