@@ -2,5 +2,5 @@
 import { Request, Response } from 'express';
 
 export const twilioView = (req: Request, res: Response) => {
-    res.render('twilioView');
+    res.render('twilioCall');
 };
