@@ -38,6 +38,7 @@ import { chatFlowData } from './controllers/botFlowData';
 import { PrismaClient } from '@prisma/client';
 import { handleFileUpload } from './controllers/handleFileUpload';
 import { twilioVoice,twilioResults,twilioCall,twilioSurvey,twilioSurveyResponse,twilioFeedback } from './controllers/twilioCalls';
+import { twilioView } from './controllers/twilioView';
 const prisma = new PrismaClient();
 
 const app = express();
@@ -80,6 +81,8 @@ app.get('/flow-tamil',adminLogged, async (req: Request, res: Response) => {
 });
 
 app.use('/bot-flow-test', getBotFlowPage);
+app.use('/bot-twilio-call', twilioView);
+
 app.post('/api/chat-response-flow', chatFlowResponse);
 app.post('/api/products-data', chatFlowData);
 
