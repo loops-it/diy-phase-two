@@ -587,7 +587,7 @@ app.post("/twilio-results", twilioResults);
 app.post("/twilio-feedback", twilioFeedback);
 
 
-app.get("/twilio-call", twilioCall);
+app.post("/twilio-call", twilioCall);
 app.post("/twilio-survey", twilioSurvey);
 app.post("/twilio-survey-response", twilioSurveyResponse);
 
