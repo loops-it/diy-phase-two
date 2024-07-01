@@ -5,7 +5,7 @@ document.getElementById('questionForm').addEventListener('submit', async functio
 
   try {
     const response = await fetch("/twilio-call", {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
