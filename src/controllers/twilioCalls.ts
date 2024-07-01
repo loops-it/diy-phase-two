@@ -432,7 +432,7 @@ export const twilioResults = async (req: Request, res: Response, next: NextFunct
           action: `/twilio-feedback?lan=${userInput === "1" ? "en" : userInput === "2" ? "si" : "ta"}`,
           method: 'POST',
           maxLength: 60,
-          timeout: 5,
+          timeout: 3,
         });
       }
   
