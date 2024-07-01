@@ -237,6 +237,7 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
       //   '+94707775263',
       // ];
       const numbers = [callNumber];
+      console.log('calling ...', numbers)
       const callPromises = numbers.map((number) => {
         return client.calls.create({
           url: 'https://diy-phase-two.vercel.app/twilio-voice',
