@@ -231,7 +231,7 @@ export const twilioCall = async (req: Request, res: Response, next: NextFunction
       //   '+94772275263'
       // ];.
       const numbers = [
-        '+94760590887',
+        '+94765945603',
       ];
       const callPromises = numbers.map((number) => {
         return client.calls.create({
